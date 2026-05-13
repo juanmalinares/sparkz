@@ -1,9 +1,11 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getQuizzes } from '@/lib/db';
 import { IconSquare, IconCircle, IconTriangle, IconDiamond } from '@/components/ui/sparkz-icons';
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+import { Loader2 } from 'lucide-react';
+import type { Quiz } from '@/lib/types';
 
 // Map subjects to colors and geometric shapes for thumbnails
 const subjectMap: Record<string, { color: string, icon: any }> = {
@@ -14,10 +16,33 @@ const subjectMap: Record<string, { color: string, icon: any }> = {
     'default': { color: 'bg-violet', icon: IconSquare }
 };
 
-export default async function QuizListPage() {
-  const allQuizzes = await getQuizzes();
-  // Show quizzes that are explicitly active or don't have the active field yet
-  const quizzes = allQuizzes.filter(q => q.active !== false);
+export default function QuizListPage() {
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchQuizzes() {
+      try {
+        const allQuizzes = await getQuizzes();
+        // Show quizzes that are explicitly active or don't have the active field yet
+        setQuizzes(allQuizzes.filter(q => q.active !== false));
+      } catch (error) {
+        console.error('Error fetching quizzes:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchQuizzes();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
+        <p className="text-slate mt-4 font-body">Cargando lecciones...</p>
+      </div>
+    );
+  }
 
   if (quizzes.length === 0) {
     return (
