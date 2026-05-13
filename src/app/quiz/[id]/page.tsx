@@ -1,23 +1,55 @@
-import { getQuizById, getQuizzes } from '@/lib/db';
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { getQuizById } from '@/lib/db';
 import QuizClient from '@/components/quiz/QuizClient';
+import { Loader2 } from 'lucide-react';
+import type { Quiz } from '@/lib/types';
 
-interface QuizPageProps {
-  params: Promise<{ id: string }>;
-}
+export default function QuizPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-export default async function QuizPage({ params }: QuizPageProps) {
-  const { id } = await params;
-  const quiz = await getQuizById(id);
+  useEffect(() => {
+    async function fetchQuiz() {
+      try {
+        const data = await getQuizById(id);
+        if (!data) {
+          setNotFound(true);
+        } else {
+          setQuiz(data);
+        }
+      } catch (error) {
+        console.error('Error fetching quiz:', error);
+        setNotFound(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (id) fetchQuiz();
+  }, [id]);
 
-  if (!quiz || !quiz.active) {
-    notFound();
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
+        <p className="text-slate mt-4 font-body">Cargando lección...</p>
+      </div>
+    );
+  }
+
+  if (notFound || !quiz) {
+    return (
+      <div className="text-center py-20">
+        <h1 className="text-4xl font-bold mb-4 text-obsidian">Lección no encontrada</h1>
+        <p className="text-xl text-slate">Esta lección no existe o fue desactivada.</p>
+      </div>
+    );
   }
 
   return <QuizClient quiz={quiz} />;
-}
-
-export async function generateStaticParams() {
-    const quizzes = await getQuizzes({ activeOnly: true });
-    return quizzes.map(quiz => ({ id: quiz.id }));
 }
