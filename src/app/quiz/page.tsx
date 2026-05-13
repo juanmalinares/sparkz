@@ -14,7 +14,9 @@ const subjectMap: Record<string, { color: string, icon: any }> = {
 };
 
 export default async function QuizListPage() {
-  const quizzes = await getQuizzes({ activeOnly: true });
+  const allQuizzes = await getQuizzes();
+  // Show quizzes that are explicitly active or don't have the active field yet
+  const quizzes = allQuizzes.filter(q => q.active !== false);
 
   return (
     <div className="pb-10">
