@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getQuizzes } from '@/lib/db';
 import { IconSquare, IconCircle, IconTriangle, IconDiamond } from '@/components/ui/sparkz-icons';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 // Map subjects to colors and geometric shapes for thumbnails
@@ -17,6 +18,15 @@ export default async function QuizListPage() {
   const allQuizzes = await getQuizzes();
   // Show quizzes that are explicitly active or don't have the active field yet
   const quizzes = allQuizzes.filter(q => q.active !== false);
+
+  if (quizzes.length === 0) {
+    return (
+      <div className="text-center py-20">
+        <h1 className="text-4xl font-bold mb-4 text-obsidian">No hay lecciones disponibles</h1>
+        <p className="text-xl text-slate">Parece que aún no hay lecciones activas. Ve al panel de Admin para crear una.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pb-10">
