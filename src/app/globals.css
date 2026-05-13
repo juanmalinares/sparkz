@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ────────────────────────────────────────────────────────────────
+   SPARKZ DESIGN SYSTEM V2.0 (Integrated)
+   Bauhaus × Space × Precision · Ages 8–10
+   ──────────────────────────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    /* Brand Colors (Hex) */
+    --electric:   #C5E830;
+    --forest:     #0D2318;
+    --cobalt:     #1A2FBF;
+    --vermillion: #E5311D;
+    --amber:      #F5C400;
+    --obsidian:   #111827;
+    --cream:      #F6F2EC;
+    --teal:       #00B4A6;
+    --violet:     #7C3AFD;
+    --stone:      #E5E1DC;
+    --slate:      #6B7280;
+    --near-black: #0A0D12;
+    --white:      #FFFFFF;
+
+    /* Shadcn/UI mapping */
+    --background:          var(--cream);
+    --foreground:          var(--obsidian);
+    --card:                var(--white);
+    --card-foreground:     var(--obsidian);
+    --popover:             var(--white);
+    --popover-foreground:  var(--obsidian);
+    --primary:             var(--cobalt);
+    --primary-foreground:  var(--white);
+    --secondary:           var(--stone);
+    --secondary-foreground: var(--obsidian);
+    --muted:               var(--stone);
+    --muted-foreground:    var(--slate);
+    --accent:              var(--electric);
+    --accent-foreground:   var(--forest);
+    --destructive:         var(--vermillion);
+    --destructive-foreground: var(--white);
+    --border:              var(--stone);
+    --input:               var(--stone);
+    --ring:                var(--cobalt);
+    --radius:              0px; /* Sharp corners as per Bauhaus feel */
+
+    /* Custom Tokens */
+    --shadow-card:  3px 3px 0 var(--obsidian);
+    --shadow-card-lg: 4px 4px 0 var(--obsidian);
+    --shadow-card-deep: 6px 6px 0 var(--near-black);
+    --shadow-pill:  2px 2px 0 var(--obsidian);
+  }
+
+  .lesson-mode {
+    --background:          var(--obsidian);
+    --foreground:          var(--cream);
+    --card:                #1a2232;
+    --card-foreground:     var(--cream);
+    --border:              var(--near-black);
+    --input:               var(--near-black);
+    --muted:               var(--near-black);
+    --muted-foreground:    var(--slate);
+    --secondary:           var(--near-black);
+    --secondary-foreground: var(--cream);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body { 
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; 
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  /* Hard-offset card */
+  .sparkz-card {
+    @apply bg-card border-2 border-obsidian;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ── Buttons ─────────────────────────────────── */
+  .btn-sparkz-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-cobalt text-white font-display font-bold
+           px-6 py-3 border-2 border-obsidian
+           transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
+           hover:-translate-x-[1px] hover:-translate-y-[1px];
+    box-shadow: var(--shadow-card);
+  }
+
+  .btn-sparkz-action {
+    @apply inline-flex items-center justify-center gap-2
+           bg-vermillion text-white font-display font-bold
+           px-6 py-3 border-2 border-obsidian
+           transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none;
+    box-shadow: var(--shadow-card);
+  }
+
+  .btn-sparkz-reward {
+    @apply inline-flex items-center justify-center gap-2
+           bg-amber text-obsidian font-display font-bold
+           px-6 py-3 border-2 border-obsidian
+           transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none;
+    box-shadow: var(--shadow-card-lg);
+  }
+
+  /* ── Labels (DM Sans all-caps) ───────────────── */
+  .sparkz-label {
+    @apply font-ui font-bold uppercase tracking-widest text-[11px];
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  /* ── Pills (Restyled) ────────────────────────── */
+  .sparkz-pill {
+    @apply border-2 border-forest bg-white px-6 py-3 inline-flex items-center
+           font-display font-bold text-[22px] transition-all cursor-pointer;
+    border-radius: 999px;
+    box-shadow: var(--shadow-pill);
+  }
+
+  .sparkz-pill[data-state="correct"] {
+    @apply border-teal bg-[#D9F5F2] scale-[1.02];
+  }
+
+  /* ── Answer option cards ─────────────────────── */
+  .answer-card {
+    @apply w-full p-4 text-left font-body font-semibold text-lg
+           bg-card border-2 border-obsidian cursor-pointer
+           transition-all duration-150 select-none;
+    box-shadow: var(--shadow-card);
+  }
+
+  .answer-card:hover:not(:disabled) {
+    @apply -translate-x-[1px] -translate-y-[1px];
+    box-shadow: var(--shadow-card-lg);
+  }
+
+  .answer-card.correct {
+    @apply border-teal bg-[#D9F5F2] text-obsidian;
+    box-shadow: 3px 3px 0 var(--teal);
+    animation: sparkz-shake 0.4s ease-in-out;
+  }
+
+  .answer-card.incorrect {
+    @apply border-stone bg-stone/50 text-slate;
+    box-shadow: 3px 3px 0 var(--stone);
+    animation: sparkz-shake 0.4s ease-in-out;
+  }
+}
+
+/* ── Animations ────────────────────────────────── */
+@keyframes sparkz-shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+  40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
+@keyframes sparkz-drop {
+  0%   { transform: translateX(-50%) translateY(-200px) rotate(-15deg); opacity: 0; }
+  60%  { transform: translateX(-50%) translateY(20px) rotate(8deg); opacity: 1; }
+  80%  { transform: translateX(-50%) translateY(-8px) rotate(-3deg); }
+  100% { transform: translateX(-50%) translateY(0) rotate(0); }
+}
