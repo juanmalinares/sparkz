@@ -31,7 +31,7 @@
     --card-foreground:     var(--obsidian);
     --popover:             var(--white);
     --popover-foreground:  var(--obsidian);
-    --primary:             var(--cobalt);
+    --primary:             var(--vermillion);
     --primary-foreground:  var(--white);
     --secondary:           var(--stone);
     --secondary-foreground: var(--obsidian);
@@ -43,7 +43,7 @@
     --destructive-foreground: var(--white);
     --border:              var(--stone);
     --input:               var(--stone);
-    --ring:                var(--cobalt);
+    --ring:                var(--vermillion);
     --radius:              0px; /* Sharp corners as per Bauhaus feel */
 
     /* Custom Tokens */
@@ -95,7 +95,7 @@
   /* ── Buttons ─────────────────────────────────── */
   .btn-sparkz-primary {
     @apply inline-flex items-center justify-center gap-2
-           bg-cobalt text-white font-display font-bold
+           bg-vermillion text-white font-display font-bold
            px-6 py-3 border-2 border-obsidian
            transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
            hover:-translate-x-[1px] hover:-translate-y-[1px];

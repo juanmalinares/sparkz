@@ -26,20 +26,20 @@ export default function LandingPage() {
                         <h1 className="font-display font-bold text-7xl md:text-[100px] leading-[0.85] mb-8 text-white tracking-tighter">
                             The spark<br />
                             that shines<br />
-                            <span className="text-electric">from within.</span>
+                            <span className="text-vermillion">from within.</span>
                         </h1>
                         <p className="font-body text-xl text-stone/80 max-w-md mb-10 leading-relaxed">
                             A premium interactive experience for curious minds. Bauhaus precision meets space-age discovery.
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Link href="/tutorial" className="btn-sparkz-primary bg-electric text-forest border-forest text-lg px-10 py-5">
+                            <Link href="/tutorial" className="btn-sparkz-primary text-lg px-10 py-5">
                                 START LEARNING
                             </Link>
                         </div>
                     </div>
 
-                    <div className="hidden lg:grid w-[400px] h-[400px] bg-electric relative grid-cols-4 grid-rows-4 p-5 border-4 border-near-black" style={{ boxShadow: '8px 8px 0 var(--near-black)' }}>
+                    <div className="hidden lg:grid w-[400px] h-[400px] bg-vermillion relative grid-cols-4 grid-rows-4 p-5 border-4 border-near-black" style={{ boxShadow: '8px 8px 0 var(--near-black)' }}>
                         {[...Array(16)].map((_, i) => (
                             <div 
                                 key={i} 
