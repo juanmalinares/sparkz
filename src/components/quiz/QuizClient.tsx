@@ -74,11 +74,27 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
   const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const sessionQuestions = useMemo(() => {
-    const all = [...(quiz.questions || [])];
-    const shuffled = all.sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, quiz.sessionLength || 5);
-  }, [quiz.questions, quiz.sessionLength]);
+  // Shuffle helper (Fisher-Yates)
+  const shuffle = <T,>(arr: T[]): T[] => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  // Randomize questions on every mount (not memoized, so each visit is fresh)
+  const [sessionQuestions] = useState(() => {
+    const active = (quiz.questions || []).filter(q => q.active !== false);
+    return shuffle(active).slice(0, quiz.sessionLength || 5);
+  });
+
+  // Randomize flashcards on every mount
+  const [sessionFlashcards] = useState(() => {
+    return shuffle(quiz.flashcards || []);
+  });
+
   const currentQuestion = useMemo(() => sessionQuestions[currentQuestionIndex], [sessionQuestions, currentQuestionIndex]);
 
   useEffect(() => {
@@ -209,7 +225,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
   );
 
   const renderFlashcardsView = () => {
-    const card = quiz.flashcards?.[currentFlashcardIndex];
+    const card = sessionFlashcards[currentFlashcardIndex];
     if (!card) return null;
 
     return (
@@ -218,7 +234,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
               <h2 className="font-display font-bold text-3xl mb-2 text-white flex items-center justify-center gap-3">
                   <IconSparkle className="w-8 h-8 text-electric" /> Repaso Activo
               </h2>
-              <p className="text-stone font-body text-sm uppercase tracking-widest">Tarjeta {currentFlashcardIndex + 1} de {quiz.flashcards?.length}</p>
+              <p className="text-stone font-body text-sm uppercase tracking-widest">Tarjeta {currentFlashcardIndex + 1} de {sessionFlashcards.length}</p>
           </div>
 
           <div 
@@ -243,7 +259,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
           </div>
 
           <div className="flex gap-4 w-full max-w-md">
-              {currentFlashcardIndex < (quiz.flashcards?.length || 0) - 1 ? (
+              {currentFlashcardIndex < sessionFlashcards.length - 1 ? (
                   <Button 
                     onClick={(e) => { e.stopPropagation(); setIsFlipped(false); setCurrentFlashcardIndex(i => i + 1) }} 
                     className="btn-sparkz-action flex-grow py-6 h-auto border-obsidian"
