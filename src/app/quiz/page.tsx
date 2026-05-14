@@ -38,7 +38,7 @@ export default function QuizListPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh]">
-        <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
+        <Loader2 className="h-12 w-12 animate-spin text-vermillion" />
         <p className="text-slate mt-4 font-body">Cargando lecciones...</p>
       </div>
     );
@@ -78,14 +78,14 @@ export default function QuizListPage() {
                 <div className="p-6 flex flex-col flex-grow bg-white">
                   <div className="mb-4">
                     <span className="sparkz-label text-slate">{quiz.topic}</span>
-                    <h2 className="text-2xl font-display font-bold text-obsidian mt-1 leading-tight group-hover:text-cobalt transition-colors">{quiz.title}</h2>
+                    <h2 className="text-2xl font-display font-bold text-obsidian mt-1 leading-tight group-hover:text-vermillion transition-colors">{quiz.title}</h2>
                   </div>
                   
                   <div className="mt-auto flex items-center justify-between">
                     <span className="text-sm font-body font-bold text-obsidian border-2 border-obsidian px-2 py-1 rounded-action" style={{ boxShadow: '2px 2px 0 #111827' }}>
                         {quiz.sessionLength || 10} Qs
                     </span>
-                    <div className="w-10 h-10 bg-amber border-2 border-obsidian rounded-action flex items-center justify-center group-hover:bg-cobalt group-hover:text-white transition-colors" style={{ boxShadow: '2px 2px 0 #111827' }}>
+                    <div className="w-10 h-10 bg-amber border-2 border-obsidian rounded-action flex items-center justify-center group-hover:bg-vermillion group-hover:text-white transition-colors" style={{ boxShadow: '2px 2px 0 #111827' }}>
                         <IconTriangle className="w-5 h-5 ml-1 transform rotate-90" />
                     </div>
                   </div>

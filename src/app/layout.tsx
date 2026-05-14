@@ -40,7 +40,7 @@ export default function RootLayout({
             </div>
           </div>
           <ol className="list-decimal list-inside space-y-2 text-sm font-body text-foreground">
-            <li>Go to the <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer" className="underline text-cobalt">Firebase Console</a> and select your project.</li>
+            <li>Go to the <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer" className="underline text-vermillion">Firebase Console</a> and select your project.</li>
             <li>Navigate to <strong>Project Settings</strong> → <strong>General</strong>.</li>
             <li>Copy the SDK config values into your <code className="bg-stone px-1 rounded">.env.local</code> file.</li>
             <li><strong>Restart the dev server</strong> after saving the file.</li>

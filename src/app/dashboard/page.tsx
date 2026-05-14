@@ -108,7 +108,7 @@ export default function DashboardPage() {
   if (userLoading || dataLoading || !user) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loader2 className="w-16 h-16 animate-spin text-cobalt" />
+        <Loader2 className="w-16 h-16 animate-spin text-vermillion" />
       </div>
     );
   }
@@ -130,7 +130,7 @@ export default function DashboardPage() {
                   {streakData.map((status, i) => (
                       <div 
                           key={i} 
-                          className={`w-6 h-6 border-2 border-obsidian rounded-sm ${status === 'great' ? 'bg-amber shadow-[1px_1px_0_#111827]' : status === 'good' ? 'bg-cobalt shadow-[1px_1px_0_#111827]' : 'bg-obsidian/50'}`}
+                          className={`w-6 h-6 border-2 border-obsidian rounded-sm ${status === 'great' ? 'bg-amber shadow-[1px_1px_0_#111827]' : status === 'good' ? 'bg-teal shadow-[1px_1px_0_#111827]' : 'bg-obsidian/50'}`}
                       />
                   ))}
               </div>

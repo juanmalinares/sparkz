@@ -36,7 +36,7 @@ export default function QuizPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
-        <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
+        <Loader2 className="h-12 w-12 animate-spin text-vermillion" />
         <p className="text-slate mt-4 font-body">Cargando lección...</p>
       </div>
     );

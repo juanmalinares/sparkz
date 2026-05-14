@@ -194,7 +194,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
       <GeometricField variant="dark" density="low" className="opacity-30" />
       
       <div className="sparkz-card p-8 bg-cream text-obsidian border-obsidian relative z-10">
-          <h2 className="font-display font-bold text-3xl mb-4 text-cobalt flex items-center gap-3">
+          <h2 className="font-display font-bold text-3xl mb-4 text-vermillion flex items-center gap-3">
               <IconArch className="w-8 h-8" /> Concepto Maestro
           </h2>
           <p className="text-xl md:text-2xl font-body font-bold leading-tight">
@@ -208,7 +208,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
                   <span className="sparkz-label text-vermillion mb-2 block">REGLA #0{i+1}</span>
                   <h3 className="font-display font-bold text-xl mb-3 text-obsidian">{rule.title}</h3>
                   <p className="font-body text-slate mb-6 text-sm leading-relaxed">{rule.text}</p>
-                  <div className="bg-electric/10 p-4 border-l-4 border-electric">
+                  <div className="bg-vermillion/10 p-4 border-l-4 border-vermillion">
                       <span className="font-label text-[10px] text-forest font-bold block mb-2 uppercase tracking-widest">PRO TIP / CHEAT CODE</span>
                       <p className="font-body font-bold text-xs text-forest">{rule.example}</p>
                   </div>
@@ -232,7 +232,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
       <div className="flex flex-col items-center gap-12 animate-in fade-in duration-500 relative z-10">
           <div className="text-center">
               <h2 className="font-display font-bold text-3xl mb-2 text-white flex items-center justify-center gap-3">
-                  <IconSparkle className="w-8 h-8 text-electric" /> Repaso Activo
+                  <IconSparkle className="w-8 h-8 text-vermillion" /> Repaso Activo
               </h2>
               <p className="text-stone font-body text-sm uppercase tracking-widest">Tarjeta {currentFlashcardIndex + 1} de {sessionFlashcards.length}</p>
           </div>
@@ -251,7 +251,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
                       <div className="absolute bottom-6 text-slate text-[10px] font-label font-bold uppercase tracking-[0.2em] opacity-40">TAP PARA REVELAR</div>
                   </div>
 
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 sparkz-card bg-electric flex flex-col items-center justify-center p-10 text-center border-obsidian" style={{ boxShadow: '6px 6px 0 var(--near-black)' }}>
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 sparkz-card bg-amber flex flex-col items-center justify-center p-10 text-center border-obsidian" style={{ boxShadow: '6px 6px 0 var(--near-black)' }}>
                       <span className="sparkz-label text-forest mb-6">RESPUESTA MAESTRA</span>
                       <p className="font-display font-bold text-3xl text-forest tracking-tight">{card.back}</p>
                   </div>
@@ -287,13 +287,13 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
         <div className="space-y-8 animate-in fade-in duration-500 relative z-10">
             <div className="bg-near-black border-b-2 border-electric sticky top-[74px] z-40 -mx-4 px-6 py-6 flex justify-between items-center text-white">
                 <div className="flex flex-col gap-2 w-full max-w-xs">
-                    <span className="sparkz-label text-[10px] text-electric">RETO FINAL EN CURSO</span>
+                    <span className="sparkz-label text-[10px] text-vermillion">RETO FINAL EN CURSO</span>
                     <div className="sparkz-progress h-3 bg-forest">
-                        <div className="sparkz-progress-fill bg-electric" style={{ width: `${progress}%` }} />
+                        <div className="sparkz-progress-fill bg-vermillion" style={{ width: `${progress}%` }} />
                     </div>
                 </div>
                 <div className="text-right">
-                    <span className="font-display font-bold text-2xl text-electric">{currentQuestionIndex + 1}</span>
+                    <span className="font-display font-bold text-2xl text-vermillion">{currentQuestionIndex + 1}</span>
                     <span className="font-display font-bold text-sm text-stone/40 ml-1">/ {sessionQuestions.length}</span>
                 </div>
             </div>
@@ -366,7 +366,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
             </div>
 
             {isAnswered && (
-                <div className={cn("sparkz-card p-8 border-obsidian animate-in slide-in-from-bottom-4 duration-500", isCorrect() ? "bg-electric text-forest" : "bg-stone text-obsidian")} style={{ boxShadow: '4px 4px 0 var(--near-black)' }}>
+                <div className={cn("sparkz-card p-8 border-obsidian animate-in slide-in-from-bottom-4 duration-500", isCorrect() ? "bg-amber text-obsidian" : "bg-stone text-obsidian")} style={{ boxShadow: '4px 4px 0 var(--near-black)' }}>
                     <div className="flex items-start gap-5">
                         {isCorrect() ? <IconBolt className="w-10 h-10 flex-shrink-0" /> : <IconQuatrefoil className="w-10 h-10 flex-shrink-0 rotate-45" />}
                         <div>
@@ -380,7 +380,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
             <div className="fixed bottom-0 left-0 right-0 bg-near-black border-t-4 border-electric p-6 z-50">
                 <div className="container mx-auto max-w-3xl flex justify-end">
                     {isAnswered ? (
-                        <button onClick={handleNext} className="btn-sparkz-primary bg-electric text-forest border-forest w-full sm:w-auto text-xl px-12 py-5 font-display font-bold">
+                        <button onClick={handleNext} className="btn-sparkz-primary w-full sm:w-auto text-xl px-12 py-5 font-display font-bold">
                             {currentQuestionIndex < sessionQuestions.length - 1 ? 'SIGUIENTE RETO' : 'FINALIZAR MISIÓN'}
                         </button>
                     ) : (
@@ -401,11 +401,11 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
       {/* Module Navigation Progress */}
       <div className="flex justify-between items-center mb-16 relative z-10">
           <div className="flex gap-4">
-              <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'theory' ? "bg-electric scale-125" : "bg-electric/20")} />
+              <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'theory' ? "bg-vermillion scale-125" : "bg-vermillion/20")} />
               <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'flashcards' ? "bg-amber scale-125" : "bg-amber/20")} />
               <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'quiz' ? "bg-vermillion scale-125" : "bg-vermillion/20")} />
           </div>
-          <span className="sparkz-label text-electric font-bold tracking-[0.2em]">FASE: {currentStep.toUpperCase()}</span>
+          <span className="sparkz-label text-vermillion font-bold tracking-[0.2em]">FASE: {currentStep.toUpperCase()}</span>
       </div>
 
       {currentStep === 'theory' && renderTheoryView()}

@@ -62,13 +62,13 @@ export default function LandingPage() {
                 <div className="grid md:grid-cols-3 gap-8">
                     <FeatureCard 
                         icon={IconQuatrefoil}
-                        colorClass="bg-cobalt text-white"
+                        colorClass="bg-vermillion text-white"
                         title="Precision"
                         description="Structured challenges designed to build real knowledge, step by step, with zero fluff."
                     />
                     <FeatureCard 
                         icon={IconBolt}
-                        colorClass="bg-electric text-forest"
+                        colorClass="bg-amber text-forest"
                         title="Energy"
                         description="Instant AI feedback that guides your growth and keeps your momentum alive."
                     />

@@ -43,7 +43,7 @@ export default function Header() {
         href={href}
         className={cn(
           'flex flex-col items-center gap-1 p-2 transition-all',
-          isActive ? 'text-electric' : 'text-stone/60 hover:text-stone hover:bg-white/5'
+          isActive ? 'text-vermillion' : 'text-stone/60 hover:text-stone hover:bg-white/5'
         )}
       >
         <Icon className={cn("w-6 h-6", isActive ? "opacity-100" : "opacity-60")} />
@@ -57,7 +57,7 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between p-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <SparkzLogo size={40} fill="var(--electric)" className="transition-transform group-hover:-translate-y-0.5" style={{ filter: 'drop-shadow(2px 2px 0px var(--near-black))' }} />
+          <SparkzLogo size={40} fill="var(--vermillion)" className="transition-transform group-hover:-translate-y-0.5" style={{ filter: 'drop-shadow(2px 2px 0px var(--near-black))' }} />
           <div className="flex flex-col leading-none">
             <span className="font-display font-bold text-2xl tracking-tight text-white">
               Sparkz
@@ -80,7 +80,7 @@ export default function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-white/10 p-0 border-2 border-near-black" style={{ boxShadow: '2px 2px 0 var(--near-black)' }}>
                   <Avatar className="h-full w-full">
-                    <AvatarFallback className="bg-electric text-forest font-display font-bold">
+                    <AvatarFallback className="bg-vermillion text-white font-display font-bold">
                       {user.displayName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -109,7 +109,7 @@ export default function Header() {
             </DropdownMenu>
           ) : (
             <>
-              <Button onClick={() => router.push('/tutorial')} className="hidden md:inline-flex btn-sparkz-primary bg-electric text-forest border-forest">
+              <Button onClick={() => router.push('/tutorial')} className="hidden md:inline-flex btn-sparkz-primary">
                 Start Learning
               </Button>
               <div className="md:hidden">

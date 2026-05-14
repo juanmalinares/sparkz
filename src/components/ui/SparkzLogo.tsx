@@ -11,7 +11,7 @@ export interface SparkzLogoProps extends React.SVGProps<SVGSVGElement> {
  * Bauhaus-inspired design with two polygons and a square base.
  */
 export const SparkzLogo = ({ 
-  fill = '#C5E830', 
+  fill = '#E5311D', 
   size = 40, 
   className,
   ...props 

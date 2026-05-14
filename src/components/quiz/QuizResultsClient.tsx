@@ -24,7 +24,7 @@ export default function QuizResultsClient({quiz, score, totalQuestions}: {quiz: 
   if (loading || !user) {
     return (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="w-16 h-16 animate-spin text-cobalt" />
+          <Loader2 className="w-16 h-16 animate-spin text-vermillion" />
         </div>
       );
   }
@@ -43,7 +43,7 @@ export default function QuizResultsClient({quiz, score, totalQuestions}: {quiz: 
         <p className="text-xl font-body text-slate mb-10">Increíble trabajo, {user?.displayName || 'estudiante'}.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <div className="sparkz-card p-6 bg-cobalt text-white border-obsidian">
+            <div className="sparkz-card p-6 bg-vermillion text-white border-obsidian">
                 <span className="sparkz-label text-white/70 block mb-2">TU PUNTAJE</span>
                 <p className="text-6xl font-display font-bold mb-1">{percentage}%</p>
                 <p className="text-sm font-body text-white/80">{score} de {totalQuestions} aciertos</p>

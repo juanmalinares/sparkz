@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { fixImgurUrl } from '@/lib/utils';
+import { SparkzLogo } from '@/components/ui/SparkzLogo';
 
 function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }) {
     const [email, setEmail] = useState('');
@@ -241,7 +241,7 @@ export default function AuthPage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const [isResetting, setIsResetting] = useState(false);
-  const logoUrl = "https://imgur.com/F1F4pnN";
+
 
   useEffect(() => {
     if (!loading && user) {
@@ -267,7 +267,7 @@ export default function AuthPage() {
         <Card className="w-full max-w-md shadow-2xl">
             <CardHeader className="text-center">
                 <div className="flex justify-center items-center mb-4">
-                    <Image src={fixImgurUrl(logoUrl)} alt="Sparkz Kids Logo" width={128} height={128} />
+                    <SparkzLogo size={96} />
                 </div>
                 <CardTitle>
                     <div className="flex flex-col items-center leading-tight">
