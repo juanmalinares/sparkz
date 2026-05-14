@@ -7,14 +7,27 @@ import { IconSquare, IconCircle, IconTriangle, IconDiamond } from '@/components/
 import { Loader2 } from 'lucide-react';
 import type { Quiz } from '@/lib/types';
 
-// Map subjects to colors and geometric shapes for thumbnails
-const subjectMap: Record<string, { color: string, icon: any }> = {
-    'Matemáticas': { color: 'bg-cobalt', icon: IconSquare },
-    'Lengua': { color: 'bg-amber', icon: IconCircle },
-    'Ciencias Naturales': { color: 'bg-teal', icon: IconTriangle },
-    'Ciencias Sociales': { color: 'bg-vermillion', icon: IconDiamond },
-    'default': { color: 'bg-violet', icon: IconSquare }
-};
+// Colores por Materia — from brand guide
+const subjectColors: { keywords: string[], color: string, icon: any }[] = [
+    { keywords: ['matemática', 'math', 'cálculo', 'álgebra', 'geometría'],       color: 'bg-cobalt',     icon: IconSquare },
+    { keywords: ['ciencia', 'science', 'naturales', 'biología', 'física', 'química'], color: 'bg-teal', icon: IconTriangle },
+    { keywords: ['lengua', 'lectura', 'reading', 'literatura', 'comprensión'],    color: 'bg-violet',     icon: IconCircle },
+    { keywords: ['arte', 'art', 'dibujo', 'pintura'],                             color: 'bg-amber',      icon: IconDiamond },
+    { keywords: ['música', 'music', 'instrumento'],                                color: 'bg-pink',       icon: IconCircle },
+    { keywords: ['programación', 'coding', 'code', 'tecnología', 'informática'],   color: 'bg-sky',        icon: IconSquare },
+    { keywords: ['historia', 'history', 'sociales'],                               color: 'bg-orange',     icon: IconDiamond },
+    { keywords: ['geografía', 'geography', 'mapas'],                               color: 'bg-emerald',    icon: IconTriangle },
+    { keywords: ['idioma', 'english', 'inglés', 'italiano', 'français', 'deutsch', 'language', 'vocabulary', 'dictation', 'routines', 'adjective', 'grammar', 'verb', 'pets'], color: 'bg-vermillion', icon: IconDiamond },
+    { keywords: ['lógica', 'logic', 'puzzle', 'reto', 'challenge'],                color: 'bg-gunmetal',   icon: IconSquare },
+];
+
+const defaultSubject = { color: 'bg-violet', icon: IconSquare };
+
+function getSubjectStyle(topic: string): { color: string; icon: any } {
+    const lower = topic.toLowerCase();
+    const match = subjectColors.find(s => s.keywords.some(k => lower.includes(k)));
+    return match ? { color: match.color, icon: match.icon } : defaultSubject;
+}
 
 export default function QuizListPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -62,7 +75,7 @@ export default function QuizListPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {quizzes.map((quiz) => {
-          const mapping = subjectMap[quiz.topic] || subjectMap['default'];
+          const mapping = getSubjectStyle(quiz.topic || quiz.title || '');
           const Icon = mapping.icon;
           
           return (

@@ -23,7 +23,7 @@ export const SparkzLogo = ({
     className={cn('block', className)}
     {...props}
   >
-    <rect x="4" y="4" width="92" height="92" rx="0" fill={fill}/>
+    <rect x="4" y="4" width="92" height="92" rx="14" fill={fill}/>
     <polygon points="4,22 63,42 4,62" fill="#0D2318"/>
     <polygon points="96,38 37,58 96,78" fill="#0D2318"/>
   </svg>

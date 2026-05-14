@@ -36,6 +36,12 @@ export default {
         stone:      '#E5E1DC',
         slate:      '#6B7280',
         'near-black': '#0A0D12',
+        // ── Subject-specific colors (Colores por Materia) ────────
+        pink:       '#E91E8C',
+        sky:        '#0EA5E9',
+        orange:     '#D97706',
+        emerald:    '#10B981',
+        gunmetal:   '#6B7B8D',
         // ── shadcn/ui semantic roles ────────────────────────────
         background:  'var(--background)',
         foreground:  'var(--foreground)',
