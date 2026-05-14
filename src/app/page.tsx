@@ -25,9 +25,9 @@ export default function LandingPage() {
                     <div className="flex-1 text-left">
                         <span className="sparkz-label text-electric mb-4 block tracking-[0.3em]">00 · IDENTIDAD</span>
                         <h1 className="font-display font-bold text-7xl md:text-[100px] leading-[0.85] mb-8 text-white tracking-tighter">
-                            La chispa<br />
-                            vive en<br />
-                            <span className="text-electric">el espacio.</span>
+                            The spark<br />
+                            that shines<br />
+                            <span className="text-electric">from within.</span>
                         </h1>
                         <p className="font-body text-xl text-stone/80 max-w-md mb-10 leading-relaxed">
                             A premium interactive experience for curious minds. Bauhaus precision meets space-age discovery.
