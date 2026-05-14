@@ -23,7 +23,6 @@ export default function LandingPage() {
                 
                 <div className="container mx-auto relative z-10 flex flex-col md:flex-row items-center gap-12 max-w-6xl">
                     <div className="flex-1 text-left">
-                        <span className="sparkz-label text-electric mb-4 block tracking-[0.3em]">00 · IDENTIDAD</span>
                         <h1 className="font-display font-bold text-7xl md:text-[100px] leading-[0.85] mb-8 text-white tracking-tighter">
                             The spark<br />
                             that shines<br />
