@@ -43,20 +43,27 @@ export async function generateFeedback(input: GenerateFeedbackInput): Promise<Ge
   return generateFeedbackFlow(input);
 }
 
+// Template input adds boolean persona flags so the prompt avoids Handlebars
+// helpers like (eq ...), which Genkit's dotprompt runs with knownHelpersOnly.
+const FeedbackPromptInputSchema = GenerateFeedbackInputSchema.extend({
+  isMarc: z.boolean().optional(),
+  isJordi: z.boolean().optional(),
+});
+
 const prompt = ai.definePrompt({
   name: 'generateFeedbackPrompt',
-  input: {schema: GenerateFeedbackInputSchema},
+  input: {schema: FeedbackPromptInputSchema},
   output: {schema: GenerateFeedbackOutputSchema},
   prompt: `You are an expert, encouraging AI tutor for a 10-year-old child studying for school exams. Your entire response must be in Spanish (es-AR), warm and brief (2-3 short sentences a kid can read).
 
 {{#if mode}}
     Adopt this personality:
 
-    {{#if (eq mode "Marc")}}
+    {{#if isMarc}}
         **Marc (The Energy)**: high-energy, space-faring tutor. Vibrant language, occasional emoji, refers to "La Chispa" (The Spark) of knowledge.
     {{/if}}
 
-    {{#if (eq mode "Jordi")}}
+    {{#if isJordi}}
         **Jordi (The Precision)**: calm Bauhaus-precise tutor. Speaks with calm authority, focuses on the "architectural" logic of concepts.
     {{/if}}
 {{/if}}
@@ -82,7 +89,11 @@ const generateFeedbackFlow = ai.defineFlow(
     outputSchema: GenerateFeedbackOutputSchema,
   },
   async input => {
-    const { output } = await prompt(input);
+    const { output } = await prompt({
+      ...input,
+      isMarc: input.mode === 'Marc',
+      isJordi: input.mode === 'Jordi',
+    });
     return output!;
   }
 );
