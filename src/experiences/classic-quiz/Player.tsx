@@ -236,45 +236,58 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
     const card = sessionFlashcards[currentFlashcardIndex];
     if (!card) return null;
 
+    const isLast = currentFlashcardIndex >= sessionFlashcards.length - 1;
+
     return (
-      <div className="flex flex-col items-center gap-12 animate-in fade-in duration-500 relative z-10">
+      <div className="flex flex-col items-center gap-8 animate-in fade-in duration-500 relative z-10">
           <div className="text-center">
-              <h2 className="font-display font-bold text-3xl mb-2 text-white flex items-center justify-center gap-3">
-                  <IconSparkle className="w-8 h-8 text-vermillion" /> Repaso Activo
+              <h2 className="font-display font-bold text-3xl mb-3 text-cream flex items-center justify-center gap-3">
+                  <IconSparkle className="w-7 h-7 text-vermillion" /> Repaso Activo
               </h2>
-              <p className="text-stone font-body text-sm uppercase tracking-widest">Tarjeta {currentFlashcardIndex + 1} de {sessionFlashcards.length}</p>
+              <div className="flex gap-1.5 justify-center">
+                  {sessionFlashcards.map((_, i) => (
+                      <span key={i} className={cn("h-2 rounded-full transition-all duration-300", i === currentFlashcardIndex ? "w-7 bg-vermillion" : i < currentFlashcardIndex ? "w-2 bg-amber" : "w-2 bg-cream/25")} />
+                  ))}
+              </div>
           </div>
 
-          <div
-              className="relative w-full max-w-md min-h-[300px] cursor-pointer sparkz-card border-obsidian flex flex-col items-center justify-center p-10 text-center transition-colors duration-300"
+          <button
+              type="button"
               onClick={() => setIsFlipped(f => !f)}
-              style={{ boxShadow: '6px 6px 0 var(--near-black)', backgroundColor: isFlipped ? 'var(--amber)' : '#ffffff' }}
+              className="relative w-full max-w-md min-h-[340px] border-4 border-obsidian flex flex-col p-7 text-left overflow-hidden transition-colors duration-300 cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
+              style={{ boxShadow: '8px 8px 0 var(--near-black)', backgroundColor: isFlipped ? 'var(--amber)' : 'var(--cream)' }}
           >
-              {!isFlipped ? (
-                  <>
-                      <span className="sparkz-label text-slate mb-6">PREGUNTA</span>
-                      <p className="font-display font-bold text-3xl text-obsidian tracking-tight">{card.front}</p>
-                      <div className="absolute bottom-6 text-slate text-[10px] font-label font-bold uppercase tracking-[0.2em] opacity-40">TAP PARA REVELAR</div>
-                  </>
-              ) : (
-                  <>
-                      <span className="sparkz-label text-forest mb-6">RESPUESTA MAESTRA</span>
-                      <p className="font-display font-bold text-3xl text-forest tracking-tight">{card.back}</p>
-                  </>
-              )}
-          </div>
+              <IconQuatrefoil className={cn("absolute -right-7 -bottom-7 w-44 h-44 pointer-events-none transition-colors duration-300", isFlipped ? "text-forest/10" : "text-vermillion/10")} />
+
+              <span
+                  className="w-fit font-label text-[11px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 relative z-10"
+                  style={{ backgroundColor: isFlipped ? 'var(--forest)' : 'var(--obsidian)', color: 'var(--cream)' }}
+              >
+                  {isFlipped ? 'Respuesta' : 'Pregunta'}
+              </span>
+
+              <div key={isFlipped ? 'back' : 'front'} className="flex-grow flex items-center justify-center py-6 relative z-10 animate-in fade-in zoom-in-95 duration-300">
+                  <p className={cn("font-display font-bold text-3xl md:text-[2.5rem] text-center leading-[1.1] tracking-tight", isFlipped ? "text-forest" : "text-obsidian")}>
+                      {isFlipped ? card.back : card.front}
+                  </p>
+              </div>
+
+              <span className="self-center flex items-center gap-1.5 font-label text-[10px] font-bold uppercase tracking-[0.2em] opacity-50 relative z-10">
+                  <RotateCcw className="w-3.5 h-3.5" /> {isFlipped ? 'Tocá para volver' : 'Tocá para revelar'}
+              </span>
+          </button>
 
           <div className="flex gap-4 w-full max-w-md">
-              {currentFlashcardIndex < sessionFlashcards.length - 1 ? (
-                  <Button 
-                    onClick={(e) => { e.stopPropagation(); setIsFlipped(false); setCurrentFlashcardIndex(i => i + 1) }} 
+              {!isLast ? (
+                  <Button
+                    onClick={(e) => { e.stopPropagation(); setIsFlipped(false); setCurrentFlashcardIndex(i => i + 1); }}
                     className="btn-sparkz-action flex-grow py-6 h-auto border-obsidian"
                   >
                       SIGUIENTE TARJETA
                   </Button>
               ) : (
-                  <Button 
-                    onClick={() => setCurrentStep('quiz')} 
+                  <Button
+                    onClick={() => setCurrentStep('quiz')}
                     className="btn-sparkz-reward flex-grow py-6 h-auto animate-amber-pulse bg-amber text-obsidian border-obsidian"
                   >
                       ¡LISTO PARA EL TEST! <IconBolt className="ml-2 fill-obsidian" />
