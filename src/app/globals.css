@@ -149,10 +149,15 @@
     box-shadow: var(--shadow-card-lg);
   }
 
+  .answer-card.selected {
+    @apply border-vermillion bg-vermillion/20;
+    box-shadow: 4px 4px 0 var(--vermillion);
+  }
+
   .answer-card.correct {
     @apply border-teal bg-[#D9F5F2] text-obsidian;
-    box-shadow: 3px 3px 0 var(--teal);
-    animation: sparkz-shake 0.4s ease-in-out;
+    box-shadow: 4px 4px 0 var(--teal);
+    animation: sparkz-pop 0.45s ease-out;
   }
 
   .answer-card.incorrect {
@@ -168,6 +173,14 @@
   20%, 80% { transform: translate3d(2px, 0, 0); }
   30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
   40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
+/* Positive confirmation: a quick pop, never the shake used for errors. */
+@keyframes sparkz-pop {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.04); }
+  70%  { transform: scale(0.99); }
+  100% { transform: scale(1); }
 }
 
 @keyframes sparkz-drop {

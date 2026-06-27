@@ -245,25 +245,23 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
               <p className="text-stone font-body text-sm uppercase tracking-widest">Tarjeta {currentFlashcardIndex + 1} de {sessionFlashcards.length}</p>
           </div>
 
-          <div 
-              className="relative w-full max-w-md aspect-[4/3] cursor-pointer perspective-1000"
-              onClick={() => setIsFlipped(!isFlipped)}
+          <div
+              className="relative w-full max-w-md min-h-[300px] cursor-pointer sparkz-card border-obsidian flex flex-col items-center justify-center p-10 text-center transition-colors duration-300"
+              onClick={() => setIsFlipped(f => !f)}
+              style={{ boxShadow: '6px 6px 0 var(--near-black)', backgroundColor: isFlipped ? 'var(--amber)' : '#ffffff' }}
           >
-              <div className={cn(
-                  "relative w-full h-full transition-all duration-500 preserve-3d",
-                  isFlipped && "rotate-y-180"
-              )}>
-                  <div className="absolute inset-0 backface-hidden sparkz-card bg-white flex flex-col items-center justify-center p-10 text-center border-obsidian" style={{ boxShadow: '6px 6px 0 var(--near-black)' }}>
+              {!isFlipped ? (
+                  <>
                       <span className="sparkz-label text-slate mb-6">PREGUNTA</span>
                       <p className="font-display font-bold text-3xl text-obsidian tracking-tight">{card.front}</p>
                       <div className="absolute bottom-6 text-slate text-[10px] font-label font-bold uppercase tracking-[0.2em] opacity-40">TAP PARA REVELAR</div>
-                  </div>
-
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 sparkz-card bg-amber flex flex-col items-center justify-center p-10 text-center border-obsidian" style={{ boxShadow: '6px 6px 0 var(--near-black)' }}>
+                  </>
+              ) : (
+                  <>
                       <span className="sparkz-label text-forest mb-6">RESPUESTA MAESTRA</span>
                       <p className="font-display font-bold text-3xl text-forest tracking-tight">{card.back}</p>
-                  </div>
-              </div>
+                  </>
+              )}
           </div>
 
           <div className="flex gap-4 w-full max-w-md">
@@ -337,10 +335,9 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
                             return (
                                 <div key={index} className="relative">
                                     <RadioGroupItem value={option} id={`option-${index}`} className="absolute opacity-0 w-0 h-0" />
-                                    <Label 
-                                        htmlFor={`option-${index}`} 
+                                    <Label
+                                        htmlFor={`option-${index}`}
                                         className={cn("answer-card block h-full flex items-center p-6 border-2 transition-all cursor-pointer", stateClass)}
-                                        style={{ boxShadow: isSelected ? '0 0 0 transparent' : '4px 4px 0 var(--near-black)' }}
                                     >
                                         <div className="flex items-center gap-5">
                                             <div className={cn(
@@ -373,41 +370,48 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
                 )}
             </div>
 
-            {isAnswered && (
-                <div className={cn("sparkz-card p-8 border-obsidian animate-in slide-in-from-bottom-4 duration-500", isCorrect() ? "bg-amber text-obsidian" : "bg-stone text-obsidian")} style={{ boxShadow: '4px 4px 0 var(--near-black)' }}>
-                    <div className="flex items-start gap-5">
-                        {isCorrect() ? <IconBolt className="w-10 h-10 flex-shrink-0" /> : <IconQuatrefoil className="w-10 h-10 flex-shrink-0 rotate-45" />}
-                        <div>
-                            <h3 className="font-display font-bold text-2xl mb-2 uppercase tracking-tighter">{isCorrect() ? "Precisión Total" : "Reajuste Necesario"}</h3>
-                            {!isCorrect() && feedbackMeta?.errorType && ERROR_LABELS[feedbackMeta.errorType] && (
-                                <span className="inline-block mb-2 text-[10px] font-label font-bold uppercase tracking-widest bg-obsidian text-white px-2 py-1">
-                                    {ERROR_LABELS[feedbackMeta.errorType]}
-                                </span>
-                            )}
-                            <p className="font-body text-lg font-bold leading-snug">{feedback}</p>
-                            {!isCorrect() && feedbackMeta?.hint && (
-                                <p className="font-body text-sm font-bold leading-snug mt-3 pt-3 border-t-2 border-obsidian/20 flex items-start gap-2">
-                                    <IconSparkle className="w-4 h-4 flex-shrink-0 mt-0.5" /> {feedbackMeta.hint}
-                                </p>
-                            )}
-                        </div>
+            {/* Confirm bar — only before answering */}
+            {!isAnswered && (
+                <div className="fixed bottom-0 left-0 right-0 bg-near-black border-t-4 border-electric p-6 z-50">
+                    <div className="container mx-auto max-w-3xl flex justify-end">
+                        <button onClick={handleAnswerSubmit} disabled={!canSubmit()} className={cn("btn-sparkz-action bg-white text-obsidian border-obsidian w-full sm:w-auto text-xl px-12 py-5 font-display font-bold", !canSubmit() && "opacity-50 cursor-not-allowed")}>
+                            CONFIRMAR
+                        </button>
                     </div>
                 </div>
             )}
 
-            <div className="fixed bottom-0 left-0 right-0 bg-near-black border-t-4 border-electric p-6 z-50">
-                <div className="container mx-auto max-w-3xl flex justify-end">
-                    {isAnswered ? (
-                        <button onClick={handleNext} className="btn-sparkz-primary w-full sm:w-auto text-xl px-12 py-5 font-display font-bold">
+            {/* Feedback modal — appears over the content so there's no scrolling for the result */}
+            {isAnswered && (
+                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-near-black/50 sm:p-4 animate-in fade-in duration-200">
+                    <div className={cn("w-full max-w-2xl max-h-[88vh] overflow-y-auto border-4 border-obsidian p-6 md:p-8 animate-in slide-in-from-bottom-8 duration-300", isCorrect() ? "bg-amber text-obsidian" : "bg-stone text-obsidian")} style={{ boxShadow: '6px 6px 0 var(--near-black)' }}>
+                        <div className="flex items-start gap-4">
+                            {isCorrect() ? <IconBolt className="w-9 h-9 flex-shrink-0" /> : <IconQuatrefoil className="w-9 h-9 flex-shrink-0 rotate-45" />}
+                            <div className="flex-grow">
+                                <h3 className="font-display font-bold text-2xl mb-2 uppercase tracking-tighter">{isCorrect() ? '¡Correcto!' : 'Reajuste Necesario'}</h3>
+                                {!isCorrect() && feedbackMeta?.errorType && ERROR_LABELS[feedbackMeta.errorType] && (
+                                    <span className="inline-block mb-2 text-[10px] font-label font-bold uppercase tracking-widest bg-obsidian text-white px-2 py-1">
+                                        {ERROR_LABELS[feedbackMeta.errorType]}
+                                    </span>
+                                )}
+                                {isFeedbackLoading ? (
+                                    <p className="font-body text-lg font-bold leading-snug flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Analizando tu respuesta…</p>
+                                ) : (
+                                    <p className="font-body text-lg font-bold leading-snug">{feedback}</p>
+                                )}
+                                {!isCorrect() && !isFeedbackLoading && feedbackMeta?.hint && (
+                                    <p className="font-body text-sm font-bold leading-snug mt-3 pt-3 border-t-2 border-obsidian/20 flex items-start gap-2">
+                                        <IconSparkle className="w-4 h-4 flex-shrink-0 mt-0.5" /> {feedbackMeta.hint}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                        <button onClick={handleNext} disabled={isFeedbackLoading} className={cn("btn-sparkz-primary w-full mt-6 text-xl py-4 font-display font-bold", isFeedbackLoading && "opacity-50 cursor-not-allowed")}>
                             {currentQuestionIndex < sessionQuestions.length - 1 ? 'SIGUIENTE RETO' : 'FINALIZAR MISIÓN'}
                         </button>
-                    ) : (
-                        <button onClick={handleAnswerSubmit} disabled={!canSubmit()} className={cn("btn-sparkz-action bg-white text-obsidian border-obsidian w-full sm:w-auto text-xl px-12 py-5 font-display font-bold", !canSubmit() && "opacity-50 cursor-not-allowed")}>
-                            CONFIRMAR
-                        </button>
-                    )}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
   };
@@ -429,13 +433,6 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
       {currentStep === 'theory' && renderTheoryView()}
       {currentStep === 'flashcards' && renderFlashcardsView()}
       {currentStep === 'quiz' && renderQuizView()}
-
-      <style jsx global>{`
-        .perspective-1000 { perspective: 1000px; }
-        .preserve-3d { transform-style: preserve-3d; }
-        .backface-hidden { backface-visibility: hidden; }
-        .rotate-y-180 { transform: rotateY(180deg); }
-      `}</style>
     </div>
   );
 }
