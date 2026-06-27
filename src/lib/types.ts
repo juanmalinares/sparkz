@@ -35,7 +35,24 @@ export interface Flashcard {
 }
 
 /** Which playable experience renders a module. Absent -> classic quiz. */
-export type ExperienceType = 'classic-quiz' | 'topdown-adventure';
+export type ExperienceType = 'classic-quiz' | 'topdown-adventure' | 'math-drill';
+
+/** Arithmetic operations the math-drill experience can generate. */
+export type DrillOperation = '+' | '-' | '×' | '÷';
+
+/** Config for the math-drill experience (procedurally generated practice). */
+export interface DrillConfig {
+  /** Which operations to mix in. */
+  operations: DrillOperation[];
+  /** Upper bound for + and - operands (default 100). */
+  maxOperand?: number;
+  /** Upper bound for × and ÷ factors (default 12). */
+  maxFactor?: number;
+  /** How many exercises per run (default 20). */
+  count?: number;
+  /** Optional countdown for the whole run, in seconds. */
+  durationSec?: number;
+}
 
 export interface Quiz {
   id: string;
@@ -50,6 +67,8 @@ export interface Quiz {
   mode?: 'Jordi' | 'Marc';
   /** Which experience renders this module. Absent -> classic quiz. */
   experienceType?: ExperienceType;
+  /** Settings for the math-drill experience (when experienceType === 'math-drill'). */
+  drill?: DrillConfig;
   createdAt?: any;
 }
 

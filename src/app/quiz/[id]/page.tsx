@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { getQuizById } from '@/lib/db';
-import QuizClient from '@/experiences/classic-quiz/Player';
+import { ExperiencePlayer } from '@/components/experience/ExperiencePlayer';
 import { Loader2 } from 'lucide-react';
 import type { Quiz } from '@/lib/types';
 
@@ -51,5 +51,5 @@ export default function QuizPage() {
     );
   }
 
-  return <QuizClient quiz={quiz} />;
+  return <ExperiencePlayer quiz={quiz} />;
 }
