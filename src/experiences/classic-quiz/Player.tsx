@@ -1,16 +1,15 @@
 'use client';
 
-import {useState, useEffect, useMemo, useRef} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 import {type Quiz, type Question as QuestionType, MatchItem, Flashcard, Rule} from '@/lib/types';
 import {useUser} from '@/hooks/useUser';
 import {generateFeedback} from '@/ai/flows/generate-feedback';
-import {generateAudio} from '@/ai/flows/generate-audio';
 import { addReport } from '@/lib/db';
 import {Button} from '@/components/ui/button';
 import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 import {Label} from '@/components/ui/label';
-import {Loader2, Flag, CheckCircle2, XCircle, GripVertical, Volume2, ArrowRight, RotateCcw, BookOpen, Layers, Zap} from 'lucide-react';
+import {Loader2, Flag, CheckCircle2, XCircle, GripVertical, ArrowRight, RotateCcw, BookOpen, Layers, Zap} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
 import {cn} from '@/lib/utils';
 import Image from 'next/image';
@@ -25,8 +24,30 @@ function normalizeString(str: string | null | undefined): string {
     if (!str) return '';
     return str
         .toLowerCase()
-        .normalize("NFD") 
-        .replace(/[\u0300-\u036f]/g, ""); 
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
+// Try to interpret a string as a number, tolerating es-AR formatting:
+// "." as thousands separator, "," as decimal, plus currency symbols/spaces.
+// Returns null when the value isn't purely numeric.
+function parseNumeric(str: string | null | undefined): number | null {
+    if (!str) return null;
+    const cleaned = str.replace(/[\s$]/g, '');
+    // Require at least one digit so bare separators (".", ",") aren't read as 0.
+    if (!/^[-+]?[\d.,]+$/.test(cleaned) || !/\d/.test(cleaned)) return null;
+    const normalized = cleaned.replace(/\./g, '').replace(',', '.');
+    const n = Number(normalized);
+    return Number.isFinite(n) ? n : null;
+}
+
+// Compare a user answer to the correct one: numeric when both parse as numbers
+// (so "2500" === "2.500"), otherwise accent/case-insensitive string match.
+function answersMatch(user: string | null | undefined, correct: string | null | undefined): boolean {
+    const un = parseNumeric(user);
+    const cn = parseNumeric(correct);
+    if (un !== null && cn !== null) return un === cn;
+    return normalizeString((user ?? '').trim()) === normalizeString((correct ?? '').trim());
 }
 
 // Draggable Item Component
@@ -58,8 +79,14 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
   const router = useRouter();
   const {addScore} = useUser();
   const {toast} = useToast();
-  
-  const [currentStep, setCurrentStep] = useState<Step>('theory');
+
+  // A module may ship without theory and/or flashcards. Skip empty phases so the
+  // learner never lands on a blank screen with no way forward.
+  const hasTheory = !!(quiz.theory && quiz.theory.rules && quiz.theory.rules.length > 0);
+  const hasFlashcards = !!(quiz.flashcards && quiz.flashcards.length > 0);
+  const firstStep: Step = hasTheory ? 'theory' : hasFlashcards ? 'flashcards' : 'quiz';
+
+  const [currentStep, setCurrentStep] = useState<Step>(firstStep);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [typedAnswer, setTypedAnswer] = useState<string>('');
@@ -67,9 +94,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
   const [isAnswered, setIsAnswered] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
-  const [isAudioLoading, setIsAudioLoading] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  
+
   // Flashcard State
   const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -116,11 +141,11 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
         case 'multiple_choice':
         case 'true_false':
         case 'odd_one_out':
-            return selectedAnswer ? normalizeString(selectedAnswer) === normalizeString(currentQuestion.correctAnswer!) : false;
+            return selectedAnswer ? answersMatch(selectedAnswer, currentQuestion.correctAnswer) : false;
         case 'fill_in_the_blank':
         case 'short_answer':
         case 'dictation':
-            return normalizeString(typedAnswer.trim()) === normalizeString(currentQuestion.correctAnswer!);
+            return answersMatch(typedAnswer.trim(), currentQuestion.correctAnswer);
         default:
             return false;
     }
@@ -217,8 +242,8 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
       </div>
 
       <div className="flex justify-center pt-8 relative z-10">
-          <Button onClick={() => setCurrentStep('flashcards')} className="btn-sparkz-primary text-xl px-12 py-8 h-auto group">
-              ENTENDIDO. A REPASAR <IconBolt className="ml-2 group-hover:scale-110 transition-transform" />
+          <Button onClick={() => setCurrentStep(hasFlashcards ? 'flashcards' : 'quiz')} className="btn-sparkz-primary text-xl px-12 py-8 h-auto group">
+              ENTENDIDO. {hasFlashcards ? 'A REPASAR' : 'AL TEST'} <IconBolt className="ml-2 group-hover:scale-110 transition-transform" />
           </Button>
       </div>
     </div>
@@ -319,7 +344,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
                             const isSelected = selectedAnswer === option;
                             let stateClass = "";
                             if (isAnswered) {
-                                const correct = normalizeString(option) === normalizeString(currentQuestion.correctAnswer!);
+                                const correct = answersMatch(option, currentQuestion.correctAnswer);
                                 if (correct) stateClass = "correct";
                                 else if (isSelected) stateClass = "incorrect";
                             } else if (isSelected) {
@@ -350,7 +375,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
                     </RadioGroup>
                 )}
 
-                {currentQuestion.type === 'fill_in_the_blank' && (
+                {(currentQuestion.type === 'fill_in_the_blank' || currentQuestion.type === 'short_answer' || currentQuestion.type === 'dictation') && (
                     <input
                         value={typedAnswer}
                         onChange={(e) => setTypedAnswer(e.target.value)}
@@ -401,8 +426,8 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
       {/* Module Navigation Progress */}
       <div className="flex justify-between items-center mb-16 relative z-10">
           <div className="flex gap-4">
-              <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'theory' ? "bg-vermillion scale-125" : "bg-vermillion/20")} />
-              <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'flashcards' ? "bg-amber scale-125" : "bg-amber/20")} />
+              {hasTheory && <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'theory' ? "bg-vermillion scale-125" : "bg-vermillion/20")} />}
+              {hasFlashcards && <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'flashcards' ? "bg-amber scale-125" : "bg-amber/20")} />}
               <div className={cn("w-4 h-4 border-2 border-near-black transition-all", currentStep === 'quiz' ? "bg-vermillion scale-125" : "bg-vermillion/20")} />
           </div>
           <span className="sparkz-label text-vermillion font-bold tracking-[0.2em]">FASE: {currentStep.toUpperCase()}</span>

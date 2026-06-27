@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { getQuizById } from '@/lib/db';
-import QuizClient from '@/components/quiz/QuizClient';
+import QuizClient from '@/experiences/classic-quiz/Player';
 import { Loader2 } from 'lucide-react';
 import type { Quiz } from '@/lib/types';
 

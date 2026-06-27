@@ -34,6 +34,9 @@ export interface Flashcard {
   back: string;
 }
 
+/** Which playable experience renders a module. Absent -> classic quiz. */
+export type ExperienceType = 'classic-quiz' | 'topdown-adventure';
+
 export interface Quiz {
   id: string;
   title: string;
@@ -45,8 +48,13 @@ export interface Quiz {
   active: boolean;
   sessionLength?: number;
   mode?: 'Jordi' | 'Marc';
+  /** Which experience renders this module. Absent -> classic quiz. */
+  experienceType?: ExperienceType;
   createdAt?: any;
 }
+
+/** Forward-looking alias: the experience-agnostic knowledge layer any experience renders. */
+export type LearningModule = Quiz;
 
 export interface User {
   uid: string;
