@@ -45,6 +45,13 @@ function SortableMatchItem({ id, text }: { id: string; text: string }) {
 
 type Step = 'theory' | 'flashcards' | 'quiz';
 
+// Friendly labels for the AI-classified error type (kid-facing, anti-anxiety framing).
+const ERROR_LABELS: Record<string, string> = {
+  procedural: 'Error de procedimiento',
+  conceptual: 'Repasemos el concepto',
+  careless: 'Casi: un descuido',
+};
+
 export default function QuizClient({quiz}: {quiz: Quiz}) {
   const router = useRouter();
   const {addScore} = useUser();
@@ -63,6 +70,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
   const [score, setScore] = useState(0);
   const [isAnswered, setIsAnswered] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedbackMeta, setFeedbackMeta] = useState<{ errorType?: string; hint?: string } | null>(null);
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
 
   // Flashcard State
@@ -154,12 +162,16 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
         question: currentQuestion.question,
         answer: userAnswer,
         isCorrect: wasCorrect,
+        correctAnswer: currentQuestion.correctAnswer,
+        explanation: currentQuestion.explanation,
         mode: quiz.mode
       });
       setFeedback(result.feedback);
+      setFeedbackMeta({ errorType: result.errorType, hint: result.hint });
     } catch (error) {
       console.error('Error generating feedback:', error);
       setFeedback(wasCorrect ? "¡Correcto! ¡Muy bien hecho." : `La respuesta correcta es ${currentQuestion.correctAnswer}.`);
+      setFeedbackMeta(null);
     } finally {
       setIsFeedbackLoading(false);
     }
@@ -172,6 +184,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
       setTypedAnswer('');
       setIsAnswered(false);
       setFeedback(null);
+      setFeedbackMeta(null);
     } else {
       addScore({
         quizId: quiz.id,
@@ -366,7 +379,17 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
                         {isCorrect() ? <IconBolt className="w-10 h-10 flex-shrink-0" /> : <IconQuatrefoil className="w-10 h-10 flex-shrink-0 rotate-45" />}
                         <div>
                             <h3 className="font-display font-bold text-2xl mb-2 uppercase tracking-tighter">{isCorrect() ? "Precisión Total" : "Reajuste Necesario"}</h3>
+                            {!isCorrect() && feedbackMeta?.errorType && ERROR_LABELS[feedbackMeta.errorType] && (
+                                <span className="inline-block mb-2 text-[10px] font-label font-bold uppercase tracking-widest bg-obsidian text-white px-2 py-1">
+                                    {ERROR_LABELS[feedbackMeta.errorType]}
+                                </span>
+                            )}
                             <p className="font-body text-lg font-bold leading-snug">{feedback}</p>
+                            {!isCorrect() && feedbackMeta?.hint && (
+                                <p className="font-body text-sm font-bold leading-snug mt-3 pt-3 border-t-2 border-obsidian/20 flex items-start gap-2">
+                                    <IconSparkle className="w-4 h-4 flex-shrink-0 mt-0.5" /> {feedbackMeta.hint}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>

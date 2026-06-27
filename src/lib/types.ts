@@ -65,6 +65,11 @@ export interface Quiz {
   active: boolean;
   sessionLength?: number;
   mode?: 'Jordi' | 'Marc';
+  /** Curriculum placement (for grouping modules into subjects/units toward exams). */
+  subject?: string;   // e.g. "Matemática"
+  unit?: string;      // e.g. "Numeración hasta 10.000"
+  grade?: string;     // e.g. "5to" / "10 años"
+  order?: number;     // sort order within a subject/unit
   /** Which experience renders this module. Absent -> classic quiz. */
   experienceType?: ExperienceType;
   /** Settings for the math-drill experience (when experienceType === 'math-drill'). */
