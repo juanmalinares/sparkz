@@ -18,7 +18,7 @@
     --obsidian:   #111827;
     --cream:      #F6F2EC;
     --teal:       #00B4A6;
-    --violet:     #7C3AFD;
+    --violet:     #7C3AED;
     --stone:      #E5E1DC;
     --slate:      #6B7280;
     --near-black: #0A0D12;
@@ -44,13 +44,13 @@
     --border:              var(--stone);
     --input:               var(--stone);
     --ring:                var(--vermillion);
-    --radius:              0px; /* Sharp corners as per Bauhaus feel */
+    --radius:              12px; /* content cards / modals */
 
-    /* Custom Tokens */
-    --shadow-card:  3px 3px 0 var(--obsidian);
-    --shadow-card-lg: 4px 4px 0 var(--obsidian);
-    --shadow-card-deep: 6px 6px 0 var(--near-black);
-    --shadow-pill:  2px 2px 0 var(--obsidian);
+    /* Custom Tokens — THE signature hard shadow, forest ink */
+    --shadow-card:  3px 3px 0 var(--forest);
+    --shadow-card-lg: 4px 4px 0 var(--forest);
+    --shadow-card-deep: 6px 6px 0 var(--forest);
+    --shadow-pill:  2px 2px 0 var(--forest);
   }
 
   .lesson-mode {
@@ -86,49 +86,50 @@
 }
 
 @layer components {
-  /* Hard-offset card */
+  /* Tactile card — hard offset shadow (forest), rounded 12px */
   .sparkz-card {
-    @apply bg-card border-2 border-obsidian;
+    @apply bg-card border-2 border-forest rounded-card;
     box-shadow: var(--shadow-card);
   }
 
-  /* ── Buttons ─────────────────────────────────── */
+  /* ── Buttons (§6 recipes) ────────────────────── */
+  /* Primary — forward action: cobalt pill */
   .btn-sparkz-primary {
     @apply inline-flex items-center justify-center gap-2
-           bg-vermillion text-white font-display font-bold
-           px-6 py-3 border-2 border-obsidian
-           transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-           hover:-translate-x-[1px] hover:-translate-y-[1px];
-    box-shadow: var(--shadow-card);
+           bg-cobalt text-white font-display font-semibold
+           px-7 py-3.5 rounded-pill
+           transition-transform active:scale-[0.96];
   }
 
+  /* Action — high-stakes (submit / challenge): vermillion, sharp */
   .btn-sparkz-action {
     @apply inline-flex items-center justify-center gap-2
            bg-vermillion text-white font-display font-bold
-           px-6 py-3 border-2 border-obsidian
+           px-7 py-3.5 rounded-action
+           transition-transform active:scale-[0.96];
+  }
+
+  /* Reward — collect / unlock: amber with hard shadow */
+  .btn-sparkz-reward {
+    @apply inline-flex items-center justify-center gap-2
+           bg-amber text-obsidian font-display font-bold
+           px-7 py-3.5 rounded-action border-2 border-forest
            transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none;
     box-shadow: var(--shadow-card);
   }
 
-  .btn-sparkz-reward {
-    @apply inline-flex items-center justify-center gap-2
-           bg-amber text-obsidian font-display font-bold
-           px-6 py-3 border-2 border-obsidian
-           transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none;
-    box-shadow: var(--shadow-card-lg);
-  }
-
-  /* ── Labels (DM Sans all-caps) ───────────────── */
+  /* ── Labels (DM Sans all-caps, wide tracking) ── */
   .sparkz-label {
-    @apply font-ui font-bold uppercase tracking-widest text-[11px];
+    @apply font-ui font-bold uppercase text-[11px];
     font-family: 'DM Sans', system-ui, sans-serif;
+    letter-spacing: 0.15em;
   }
 
-  /* ── Pills (Restyled) ────────────────────────── */
+  /* ── Selection pill (core answer mechanic) ───── */
   .sparkz-pill {
     @apply border-2 border-forest bg-white px-6 py-3 inline-flex items-center
-           font-display font-bold text-[22px] transition-all cursor-pointer;
-    border-radius: 999px;
+           font-display font-bold text-[22px] transition-all cursor-pointer rounded-pill;
+    min-height: 56px;
     box-shadow: var(--shadow-pill);
   }
 
@@ -136,11 +137,12 @@
     @apply border-teal bg-[#D9F5F2] scale-[1.02];
   }
 
-  /* ── Answer option cards ─────────────────────── */
+  /* ── Answer option cards (quiz) ──────────────── */
   .answer-card {
     @apply w-full p-4 text-left font-body font-semibold text-lg
-           bg-card border-2 border-obsidian cursor-pointer
+           bg-card border-2 border-forest rounded-card cursor-pointer
            transition-all duration-150 select-none;
+    min-height: 56px;
     box-shadow: var(--shadow-card);
   }
 
@@ -149,20 +151,23 @@
     box-shadow: var(--shadow-card-lg);
   }
 
+  /* selected (pre-confirm) — cobalt, the primary */
   .answer-card.selected {
-    @apply border-vermillion bg-vermillion/20;
-    box-shadow: 4px 4px 0 var(--vermillion);
+    @apply border-cobalt bg-cobalt/10;
+    box-shadow: 4px 4px 0 var(--cobalt);
   }
 
+  /* correct — teal, calm pop (never the error shake) */
   .answer-card.correct {
     @apply border-teal bg-[#D9F5F2] text-obsidian;
     box-shadow: 4px 4px 0 var(--teal);
     animation: sparkz-pop 0.45s ease-out;
   }
 
+  /* wrong — grey + shake, NEVER red (non-punishing) */
   .answer-card.incorrect {
-    @apply border-stone bg-stone/50 text-slate;
-    box-shadow: 3px 3px 0 var(--stone);
+    @apply border-slate bg-[#F3F4F6] text-slate;
+    box-shadow: 3px 3px 0 var(--slate);
     animation: sparkz-shake 0.4s ease-in-out;
   }
 }
