@@ -17,13 +17,21 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Space Grotesk', 'sans-serif'],
-        body: ['Plus Jakarta Sans', 'sans-serif'],
-        ui: ['DM Sans', 'sans-serif'],
-        label: ['DM Sans', 'sans-serif'],
+        display: ['Anton', 'sans-serif'],          /* titles, wordmark — condensed impact */
+        body: ['Hanken Grotesk', 'sans-serif'],     /* copy, descriptions */
+        ui: ['Hanken Grotesk', 'sans-serif'],       /* labels, nav, chips */
+        label: ['Hanken Grotesk', 'sans-serif'],
       },
       colors: {
-        // ── Sparkz Primary Palette (Hex) ────────────────────────
+        // ── Sparkz V3.0 Palette (real design tokens) ────────────
+        brand:      '#6E6BF0',  /* primary action, the Z, focus */
+        pop:        '#F2674C',  /* challenge / high-stakes (coral) */
+        mint:       '#1FE0A6',  /* correct / success / accent */
+        gold:       '#F4C24A',  /* reward */
+        ink:        '#FFFFFF',  /* text / icons on dark */
+        surface:    '#1E2127',  /* cards on dark */
+        base:       '#14161A',  /* app background (dark) */
+        // ── Legacy palette (being migrated) ─────────────────────
         electric:   '#C5E830',
         forest:     '#0D2318',
         cobalt:     '#1A2FBF',
