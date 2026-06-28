@@ -1,85 +1,58 @@
 import Link from 'next/link';
-import { GeometricField } from '@/components/ui/geometric-field';
-import { IconQuatrefoil, IconBolt, IconSparkle, IconArch } from '@/components/ui/sparkz-icons';
-import { cn } from '@/lib/utils';
+import type { CSSProperties } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { IconQuatrefoil, IconBolt, IconSparkle } from '@/components/ui/sparkz-icons';
 import { SparkzLogo } from '@/components/ui/SparkzLogo';
 
-const FeatureCard = ({ icon: Icon, title, description, colorClass }: { icon: any, title: string, description: string, colorClass: string }) => (
-    <div className="sparkz-card p-8 flex flex-col items-center text-center relative overflow-hidden group transition-transform hover:-translate-y-1">
-        <div className={cn("w-16 h-16 flex items-center justify-center mb-6 border-2 border-obsidian", colorClass)} style={{ boxShadow: '3px 3px 0 var(--obsidian)' }}>
-            <Icon className="w-8 h-8" />
-        </div>
-        <h3 className="font-display font-bold text-2xl mb-3 text-obsidian uppercase tracking-tight">{title}</h3>
-        <p className="font-body text-slate text-sm leading-relaxed">{description}</p>
-    </div>
-);
+const FEATURES = [
+  { Icon: IconQuatrefoil, accent: '#6E6BF0', title: 'Precisión',     text: 'Retos paso a paso que construyen conocimiento real, sin relleno.' },
+  { Icon: IconBolt,       accent: '#1FE0A6', title: 'Energía',       text: 'Feedback de IA al instante que te guía y te mantiene en racha.' },
+  { Icon: IconSparkle,    accent: '#F4C24A', title: 'Descubrimiento', text: 'Desbloqueá logros que reflejan tu progreso de verdad.' },
+];
 
 export default function LandingPage() {
-    return (
-        <div className="min-h-screen -mt-8 -mx-4 pb-20 bg-forest text-cream flex flex-col">
-            {/* Hero Section */}
-            <section className="relative pt-32 pb-24 px-4 overflow-hidden flex-shrink-0 border-b-4 border-near-black">
-                <GeometricField variant="dark" density="high" className="z-0" />
-                
-                <div className="container mx-auto relative z-10 flex flex-col md:flex-row items-center gap-12 max-w-6xl">
-                    <div className="flex-1 text-left">
-                        <h1 className="font-display font-bold text-7xl md:text-[100px] leading-[0.85] mb-8 text-white tracking-tighter">
-                            The spark<br />
-                            that shines<br />
-                            <span className="text-vermillion">from within.</span>
-                        </h1>
-                        <p className="font-body text-xl text-stone/80 max-w-md mb-10 leading-relaxed">
-                            A premium interactive experience for curious minds. Bauhaus precision meets space-age discovery.
-                        </p>
-                        
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <Link href="/tutorial" className="btn-sparkz-primary text-lg px-10 py-5">
-                                START LEARNING
-                            </Link>
-                        </div>
-                    </div>
+  return (
+    <div className="pb-6 space-y-8">
+      {/* Hero */}
+      <section className="relative overflow-hidden rounded-card bg-brand p-7" style={{ boxShadow: 'var(--glow-brand)' }}>
+        <SparkzLogo size={150} fill="#ffffff" className="absolute -right-8 -top-8 opacity-[0.12] pointer-events-none" />
+        <span className="sparkz-label text-ink/70 relative z-10">Sparkz · Edades 6–10</span>
+        <h1 className="font-display text-[44px] leading-[0.9] text-ink mt-2 relative z-10">
+          Aprendé<br />jugando.
+        </h1>
+        <p className="font-body text-ink/85 mt-4 max-w-sm relative z-10 leading-relaxed">
+          Lecciones cortas, feedback al instante y recompensas. La chispa que llevás adentro, lista para brillar.
+        </p>
+        <Link
+          href="/quiz"
+          className="relative z-10 inline-flex items-center gap-2 mt-6 bg-base text-ink font-display uppercase tracking-wide px-7 py-3.5 rounded-pill text-lg transition-transform active:scale-[0.96]"
+        >
+          Empezar a aprender <ArrowRight className="w-5 h-5" />
+        </Link>
+      </section>
 
-                    <div className="hidden lg:grid w-[400px] h-[400px] bg-vermillion relative grid-cols-4 grid-rows-4 p-5 border-4 border-near-black" style={{ boxShadow: '8px 8px 0 var(--near-black)' }}>
-                        {[...Array(16)].map((_, i) => (
-                            <div 
-                                key={i} 
-                                className={cn(
-                                    "transition-all duration-500",
-                                    i % 3 === 0 ? 'bg-forest' : 'bg-transparent',
-                                    i % 2 === 0 ? 'rounded-full scale-75' : 'rounded-none'
-                                )} 
-                            />
-                        ))}
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                             <SparkzLogo size={120} fill="white" className="opacity-10" />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Features Section */}
-            <section className="relative z-10 container mx-auto px-4 -mt-12 max-w-6xl">
-                <div className="grid md:grid-cols-3 gap-8">
-                    <FeatureCard 
-                        icon={IconQuatrefoil}
-                        colorClass="bg-vermillion text-white"
-                        title="Precision"
-                        description="Structured challenges designed to build real knowledge, step by step, with zero fluff."
-                    />
-                    <FeatureCard 
-                        icon={IconBolt}
-                        colorClass="bg-amber text-forest"
-                        title="Energy"
-                        description="Instant AI feedback that guides your growth and keeps your momentum alive."
-                    />
-                    <FeatureCard 
-                        icon={IconSparkle}
-                        colorClass="bg-vermillion text-white"
-                        title="Discovery"
-                        description="Unlock achievements that reflect true mastery. Premium rewards for premium effort."
-                    />
-                </div>
-            </section>
-        </div>
-    )
+      {/* Features */}
+      <section className="space-y-4">
+        <span className="sparkz-label text-[color:var(--muted-foreground)]">Por qué Sparkz</span>
+        {FEATURES.map(f => (
+          <div
+            key={f.title}
+            className="sparkz-card p-5 flex items-start gap-4"
+            style={{ '--accent': f.accent } as CSSProperties}
+          >
+            <div
+              className="w-11 h-11 rounded-xl grid place-items-center shrink-0"
+              style={{ background: 'color-mix(in srgb, var(--accent) 16%, transparent)' }}
+            >
+              <f.Icon className="w-6 h-6" color="var(--accent)" />
+            </div>
+            <div>
+              <h3 className="font-display text-xl text-ink leading-none">{f.title}</h3>
+              <p className="font-body text-[15px] text-[color:var(--muted-foreground)] mt-1.5 leading-relaxed">{f.text}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+    </div>
+  );
 }
