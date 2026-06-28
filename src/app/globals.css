@@ -9,7 +9,16 @@
 
 @layer base {
   :root {
-    /* Brand Colors (Hex) */
+    /* ── V3.0 palette ── */
+    --brand:      #6E6BF0;
+    --pop:        #F2674C;
+    --mint:       #1FE0A6;
+    --gold:       #F4C24A;
+    --ink:        #FFFFFF;
+    --surface:    #1E2127;
+    --base:       #14161A;
+    --line:       #2A2E37; /* hairline border on dark */
+    /* ── Legacy (being migrated) ── */
     --electric:   #C5E830;
     --forest:     #0D2318;
     --cobalt:     #1A2FBF;
@@ -18,52 +27,48 @@
     --obsidian:   #111827;
     --cream:      #F6F2EC;
     --teal:       #00B4A6;
-    --violet:     #7C3AFD;
+    --violet:     #7C3AED;
     --stone:      #E5E1DC;
     --slate:      #6B7280;
     --near-black: #0A0D12;
     --white:      #FFFFFF;
 
-    /* Shadcn/UI mapping */
-    --background:          var(--cream);
-    --foreground:          var(--obsidian);
-    --card:                var(--white);
-    --card-foreground:     var(--obsidian);
-    --popover:             var(--white);
-    --popover-foreground:  var(--obsidian);
-    --primary:             var(--vermillion);
-    --primary-foreground:  var(--white);
-    --secondary:           var(--stone);
-    --secondary-foreground: var(--obsidian);
-    --muted:               var(--stone);
-    --muted-foreground:    var(--slate);
-    --accent:              var(--electric);
-    --accent-foreground:   var(--forest);
-    --destructive:         var(--vermillion);
-    --destructive-foreground: var(--white);
-    --border:              var(--stone);
-    --input:               var(--stone);
-    --ring:                var(--vermillion);
-    --radius:              0px; /* Sharp corners as per Bauhaus feel */
+    /* Shadcn/UI roles — DARK-FIRST (V3.0) */
+    --background:          var(--base);
+    --foreground:          var(--ink);
+    --card:                var(--surface);
+    --card-foreground:     var(--ink);
+    --popover:             var(--surface);
+    --popover-foreground:  var(--ink);
+    --primary:             var(--brand);
+    --primary-foreground:  var(--ink);
+    --secondary:           var(--surface);
+    --secondary-foreground: var(--ink);
+    --muted:               var(--line);
+    --muted-foreground:    #9CA3AF;
+    --accent:              var(--mint);
+    --accent-foreground:   var(--base);
+    --destructive:         var(--pop);
+    --destructive-foreground: var(--ink);
+    --border:              var(--line);
+    --input:               var(--line);
+    --ring:                var(--brand);
+    --radius:              16px;
 
-    /* Custom Tokens */
-    --shadow-card:  3px 3px 0 var(--obsidian);
-    --shadow-card-lg: 4px 4px 0 var(--obsidian);
-    --shadow-card-deep: 6px 6px 0 var(--near-black);
-    --shadow-pill:  2px 2px 0 var(--obsidian);
+    /* Depth for dark surfaces (soft) + brand glow for hero elements */
+    --shadow-card:  0 6px 20px rgba(0,0,0,0.45);
+    --shadow-card-lg: 0 10px 28px rgba(0,0,0,0.5);
+    --shadow-card-deep: 0 16px 40px rgba(0,0,0,0.55);
+    --shadow-pill:  0 4px 14px rgba(0,0,0,0.4);
+    --glow-brand:   0 0 28px rgba(110,107,240,0.45);
   }
 
+  /* lesson-mode now matches the dark base (kept for the body class toggle) */
   .lesson-mode {
-    --background:          var(--obsidian);
-    --foreground:          var(--cream);
-    --card:                #1a2232;
-    --card-foreground:     var(--cream);
-    --border:              var(--near-black);
-    --input:               var(--near-black);
-    --muted:               var(--near-black);
-    --muted-foreground:    var(--slate);
-    --secondary:           var(--near-black);
-    --secondary-foreground: var(--cream);
+    --background:          var(--base);
+    --foreground:          var(--ink);
+    --card:                var(--surface);
+    --card-foreground:     var(--ink);
   }
 }
 
@@ -72,92 +77,99 @@
     @apply border-border;
   }
 
-  html, body { 
+  html, body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased; 
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    letter-spacing: -0.02em;
-    font-weight: 700;
+    font-family: 'Anton', system-ui, sans-serif;
+    letter-spacing: 0;
+    font-weight: 400;
   }
 }
 
 @layer components {
-  /* Hard-offset card */
+  /* Card on dark surface — soft depth, rounded */
   .sparkz-card {
-    @apply bg-card border-2 border-obsidian;
+    @apply bg-card rounded-card border border-[color:var(--line)];
     box-shadow: var(--shadow-card);
   }
 
-  /* ── Buttons ─────────────────────────────────── */
+  /* ── Buttons (V3.0) — Anton, uppercase, pill ──── */
+  /* Primary — forward (Continuar): brand violet + glow */
   .btn-sparkz-primary {
     @apply inline-flex items-center justify-center gap-2
-           bg-vermillion text-white font-display font-bold
-           px-6 py-3 border-2 border-obsidian
-           transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-           hover:-translate-x-[1px] hover:-translate-y-[1px];
-    box-shadow: var(--shadow-card);
+           bg-brand text-ink font-display uppercase tracking-wide
+           px-7 py-3.5 rounded-pill text-lg
+           transition-transform active:scale-[0.96];
+    box-shadow: var(--glow-brand);
   }
 
+  /* Action — check answer (Comprobar): mint */
   .btn-sparkz-action {
     @apply inline-flex items-center justify-center gap-2
-           bg-vermillion text-white font-display font-bold
-           px-6 py-3 border-2 border-obsidian
-           transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none;
-    box-shadow: var(--shadow-card);
+           bg-mint text-[color:var(--base)] font-display uppercase tracking-wide
+           px-7 py-3.5 rounded-pill text-lg
+           transition-transform active:scale-[0.96];
   }
 
+  /* Reward — collect / unlock: gold */
   .btn-sparkz-reward {
     @apply inline-flex items-center justify-center gap-2
-           bg-amber text-obsidian font-display font-bold
-           px-6 py-3 border-2 border-obsidian
-           transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none;
-    box-shadow: var(--shadow-card-lg);
+           bg-gold text-[color:var(--base)] font-display uppercase tracking-wide
+           px-7 py-3.5 rounded-pill text-lg
+           transition-transform active:scale-[0.96];
   }
 
-  /* ── Labels (DM Sans all-caps) ───────────────── */
+  /* ── Labels (Hanken, all-caps, wide tracking) ── */
   .sparkz-label {
-    @apply font-ui font-bold uppercase tracking-widest text-[11px];
-    font-family: 'DM Sans', system-ui, sans-serif;
+    @apply font-ui font-bold uppercase text-[11px] text-[color:var(--muted-foreground)];
+    letter-spacing: 0.15em;
   }
 
-  /* ── Pills (Restyled) ────────────────────────── */
+  /* ── Selection pill (core answer mechanic) ───── */
   .sparkz-pill {
-    @apply border-2 border-forest bg-white px-6 py-3 inline-flex items-center
-           font-display font-bold text-[22px] transition-all cursor-pointer;
-    border-radius: 999px;
-    box-shadow: var(--shadow-pill);
+    @apply border-2 border-[color:var(--line)] bg-surface text-ink px-6 py-3 inline-flex items-center
+           font-display text-[22px] transition-all cursor-pointer rounded-pill;
+    min-height: 56px;
   }
 
   .sparkz-pill[data-state="correct"] {
-    @apply border-teal bg-[#D9F5F2] scale-[1.02];
+    @apply border-mint;
+    background: rgba(31, 224, 166, 0.12);
   }
 
-  /* ── Answer option cards ─────────────────────── */
+  /* ── Answer option cards (quiz) ──────────────── */
   .answer-card {
     @apply w-full p-4 text-left font-body font-semibold text-lg
-           bg-card border-2 border-obsidian cursor-pointer
+           bg-surface text-ink border-2 border-[color:var(--line)] rounded-card cursor-pointer
            transition-all duration-150 select-none;
-    box-shadow: var(--shadow-card);
+    min-height: 56px;
   }
 
   .answer-card:hover:not(:disabled) {
-    @apply -translate-x-[1px] -translate-y-[1px];
-    box-shadow: var(--shadow-card-lg);
+    @apply border-brand -translate-y-[1px];
   }
 
+  /* selected (pre-confirm) — brand violet */
+  .answer-card.selected {
+    @apply border-brand;
+    background: rgba(110, 107, 240, 0.15);
+  }
+
+  /* correct — mint, calm pop (never the error shake) */
   .answer-card.correct {
-    @apply border-teal bg-[#D9F5F2] text-obsidian;
-    box-shadow: 3px 3px 0 var(--teal);
-    animation: sparkz-shake 0.4s ease-in-out;
+    @apply border-mint text-ink;
+    background: rgba(31, 224, 166, 0.15);
+    animation: sparkz-pop 0.45s ease-out;
   }
 
+  /* wrong — grey + shake, NEVER red (non-punishing) */
   .answer-card.incorrect {
-    @apply border-stone bg-stone/50 text-slate;
-    box-shadow: 3px 3px 0 var(--stone);
+    @apply border-[color:var(--muted-foreground)] text-[color:var(--muted-foreground)];
+    background: rgba(156, 163, 175, 0.1);
     animation: sparkz-shake 0.4s ease-in-out;
   }
 }
@@ -168,6 +180,14 @@
   20%, 80% { transform: translate3d(2px, 0, 0); }
   30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
   40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
+/* Positive confirmation: a quick pop, never the shake used for errors. */
+@keyframes sparkz-pop {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.04); }
+  70%  { transform: scale(0.99); }
+  100% { transform: scale(1); }
 }
 
 @keyframes sparkz-drop {

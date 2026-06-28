@@ -1,10 +1,15 @@
-
 'use server';
 
 /**
- * @fileOverview Generates AI-powered feedback for quiz questions.
+ * @fileOverview Generates AI-powered, error-aware feedback for quiz questions.
  *
- * - generateFeedback - A function that generates feedback based on the question, answer, and correctness.
+ * Based on K-12 math research (Khanmigo multi-path tutoring, MathEDU error
+ * analysis, Vanderbilt misconception dataset): feedback classifies the error
+ * (procedural vs. conceptual vs. careless), frames mistakes as useful
+ * information (reduces math anxiety), and offers a guiding hint rather than
+ * just restating the answer.
+ *
+ * - generateFeedback - Generates feedback based on the question, answer, and correctness.
  * - GenerateFeedbackInput - The input type for the generateFeedback function.
  * - GenerateFeedbackOutput - The return type for the generateFeedback function.
  */
@@ -16,12 +21,21 @@ const GenerateFeedbackInputSchema = z.object({
   question: z.string().describe('The quiz question.'),
   answer: z.string().describe('The user selected answer.'),
   isCorrect: z.boolean().describe('Whether the answer is correct or not.'),
+  correctAnswer: z.string().optional().describe('The correct answer, so the tutor can reason about the gap.'),
+  explanation: z.string().optional().describe('Reference explanation for the question, if available.'),
   mode: z.enum(['Jordi', 'Marc']).optional().describe('The personality mode for the AI tutor.'),
 });
 export type GenerateFeedbackInput = z.infer<typeof GenerateFeedbackInputSchema>;
 
 const GenerateFeedbackOutputSchema = z.object({
-  feedback: z.string().describe('The AI-generated feedback for the answer.'),
+  feedback: z.string().describe('The kid-friendly feedback message, in Spanish (es-AR).'),
+  errorType: z
+    .enum(['procedural', 'conceptual', 'careless', 'none'])
+    .describe("Type of the student's error: 'procedural' (understood the idea, slipped in the steps), 'conceptual' (misunderstood the idea), 'careless' (a slip/typo), or 'none' (answer was correct)."),
+  hint: z
+    .string()
+    .optional()
+    .describe('When incorrect: ONE short guiding question (Spanish) that nudges the child toward fixing it WITHOUT stating the final answer.'),
 });
 export type GenerateFeedbackOutput = z.infer<typeof GenerateFeedbackOutputSchema>;
 
@@ -29,41 +43,43 @@ export async function generateFeedback(input: GenerateFeedbackInput): Promise<Ge
   return generateFeedbackFlow(input);
 }
 
+// Template input adds boolean persona flags so the prompt avoids Handlebars
+// helpers like (eq ...), which Genkit's dotprompt runs with knownHelpersOnly.
+const FeedbackPromptInputSchema = GenerateFeedbackInputSchema.extend({
+  isMarc: z.boolean().optional(),
+  isJordi: z.boolean().optional(),
+});
+
 const prompt = ai.definePrompt({
   name: 'generateFeedbackPrompt',
-  input: {schema: GenerateFeedbackInputSchema},
+  input: {schema: FeedbackPromptInputSchema},
   output: {schema: GenerateFeedbackOutputSchema},
-  prompt: `You are an expert AI tutor that provides helpful feedback on trivia questions to reinforce learning. Your response must be in Spanish.
+  prompt: `You are an expert, encouraging AI tutor for a 10-year-old child studying for school exams. Your entire response must be in Spanish (es-AR), warm and brief (2-3 short sentences a kid can read).
 
 {{#if mode}}
-    You will adopt a specific personality based on the provided mode.
+    Adopt this personality:
 
-    {{#if (eq mode "Marc")}}
-        **Personality: Marc (The Energy)**
-        You are Marc, a high-energy, space-faring tutor. You see learning as an adventure through the cosmos. Your language is vibrant, and you often refer to "La Chispa" (The Spark) of knowledge.
-        
-        *   If the answer is correct: "¡EXCELENTE! ⚡️ Has encendido la chispa en este rincón del espacio." Follow with a high-energy fun fact.
-        *   If the answer is incorrect: "¡Ups! Un pequeño desvío en la órbita. 🚀 No pasa nada, ajustamos los propulsores y seguimos." Explain simply and keep the energy high.
+    {{#if isMarc}}
+        **Marc**: an upbeat, friendly coach — like a cool older sibling who happens to be great at math. Motivating but DOWN TO EARTH: no space metaphors, no "La Chispa"/"Spark", no emoji, no over-the-top hype. Sound like a real person.
     {{/if}}
 
-    {{#if (eq mode "Jordi")}}
-        **Personality: Jordi (The Precision)**
-        You are Jordi, a master of Bauhaus precision. You value structure, clarity, and deep understanding. You speak with calm authority and focus on the "architectural" logic of concepts.
-        
-        *   If the answer is correct: "Precisión absoluta. La estructura de tu razonamiento es impecable." Provide a detailed, deep-dive explanation.
-        *   If the answer is incorrect: "Un error en el diseño lógico. Analicemos la estructura." Logically explain the flaw and rebuild the concept with the correct answer.
+    {{#if isJordi}}
+        **Jordi**: calm, clear and precise. Explains step by step with quiet confidence. Friendly — never cold, never pretentious.
     {{/if}}
-{{else}}
-    **Default Personality**
-    *   If the answer is correct, congratulate the user with a focus on "Mastery" and provide a deep explanation.
-    *   If the answer is incorrect, gently explain the gap in logic and provide the correct "Blueprint" for the concept.
 {{/if}}
 
 Question: {{{question}}}
-User's Answer: {{{answer}}}
-Was it correct?: {{{isCorrect}}}
+Student's answer: {{{answer}}}
+{{#if correctAnswer}}Correct answer (for your reasoning — do not just dump it): {{{correctAnswer}}}{{/if}}
+{{#if explanation}}Reference explanation: {{{explanation}}}{{/if}}
+Was the student correct?: {{{isCorrect}}}
 
-Detailed Feedback:`,
+How to respond:
+- If CORRECT: celebrate briefly and reinforce WHY it is right — the underlying concept or rule — so the understanding sticks (mastery framing). Set errorType to "none" and omit hint.
+- If INCORRECT: treat the mistake as useful information, NEVER as failure — be kind, never shaming (this reduces math anxiety). Figure out the most likely cause of THIS specific mistake and explain the concept or procedure the child should adjust. Set "feedback" to that kind explanation. Set "hint" to ONE guiding question that points toward the fix WITHOUT revealing the final number/answer.
+- Classify the mistake in "errorType": "procedural" (understood the concept but slipped in the calculation/steps), "conceptual" (misunderstood the underlying idea), "careless" (a small slip/typo), or "none" (correct).
+
+Keep it concrete and age-appropriate. Tone: natural and sincere, like a real Argentine tutor talking to a kid — never corny, cheesy or exaggerated, no clichés or purple prose, at most one exclamation mark. Respond ONLY with the structured output.`,
 });
 
 const generateFeedbackFlow = ai.defineFlow(
@@ -73,7 +89,11 @@ const generateFeedbackFlow = ai.defineFlow(
     outputSchema: GenerateFeedbackOutputSchema,
   },
   async input => {
-    const { output } = await prompt(input);
+    const { output } = await prompt({
+      ...input,
+      isMarc: input.mode === 'Marc',
+      isJordi: input.mode === 'Jordi',
+    });
     return output!;
   }
 );

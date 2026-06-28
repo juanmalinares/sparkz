@@ -17,13 +17,21 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Space Grotesk', 'sans-serif'],
-        body: ['Plus Jakarta Sans', 'sans-serif'],
-        ui: ['DM Sans', 'sans-serif'],
-        label: ['DM Sans', 'sans-serif'],
+        display: ['Anton', 'sans-serif'],          /* titles, wordmark — condensed impact */
+        body: ['Hanken Grotesk', 'sans-serif'],     /* copy, descriptions */
+        ui: ['Hanken Grotesk', 'sans-serif'],       /* labels, nav, chips */
+        label: ['Hanken Grotesk', 'sans-serif'],
       },
       colors: {
-        // ── Sparkz Primary Palette (Hex) ────────────────────────
+        // ── Sparkz V3.0 Palette (real design tokens) ────────────
+        brand:      '#6E6BF0',  /* primary action, the Z, focus */
+        pop:        '#F2674C',  /* challenge / high-stakes (coral) */
+        mint:       '#1FE0A6',  /* correct / success / accent */
+        gold:       '#F4C24A',  /* reward */
+        ink:        '#FFFFFF',  /* text / icons on dark */
+        surface:    '#1E2127',  /* cards on dark */
+        base:       '#14161A',  /* app background (dark) */
+        // ── Legacy palette (being migrated) ─────────────────────
         electric:   '#C5E830',
         forest:     '#0D2318',
         cobalt:     '#1A2FBF',
@@ -32,12 +40,12 @@ export default {
         obsidian:   '#111827',
         cream:      '#F6F2EC',
         teal:       '#00B4A6',
-        violet:     '#7C3AFD',
+        violet:     '#7C3AED',
         stone:      '#E5E1DC',
         slate:      '#6B7280',
         'near-black': '#0A0D12',
         // ── Subject-specific colors (Colores por Materia) ────────
-        pink:       '#E91E8C',
+        pink:       '#EC4899',
         sky:        '#0EA5E9',
         orange:     '#D97706',
         emerald:    '#10B981',
@@ -78,17 +86,19 @@ export default {
         ring:   'var(--ring)',
       },
       borderRadius: {
-        pill:   '999px',
-        card:   '0px',
-        action: '0px',
+        pill:   '999px',  /* primary buttons, tags, selection pills */
+        card:   '12px',   /* content cards, modals */
+        sharp:  '4px',    /* action & reward buttons, badges */
+        action: '4px',
         lg:     'var(--radius)',
         md:     'calc(var(--radius) - 2px)',
         sm:     'calc(var(--radius) - 4px)',
       },
       boxShadow: {
-        'sparkz-card':   '3px 3px 0 var(--obsidian)',
-        'sparkz-card-lg':'4px 4px 0 var(--obsidian)',
-        'sparkz-pill':   '2px 2px 0 var(--obsidian)',
+        /* THE signature — hard offset, forest ink, never soft */
+        'sparkz-card':   '3px 3px 0 var(--forest)',
+        'sparkz-card-lg':'4px 4px 0 var(--forest)',
+        'sparkz-pill':   '2px 2px 0 var(--forest)',
       },
       keyframes: {
         // ── Accordion (keep for shadcn) ─────────────────────────

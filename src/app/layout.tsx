@@ -4,6 +4,7 @@ import {cn} from '@/lib/utils';
 import {UserProvider} from '@/context/UserProvider';
 import {Toaster} from '@/components/ui/toaster';
 import Header from '@/components/layout/Header';
+import BottomNav from '@/components/layout/BottomNav';
 import { AlertTriangle } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -52,9 +53,10 @@ export default function RootLayout({
     bodyContent = (
       <UserProvider>
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-8">
+        <main className="flex-grow w-full max-w-lg mx-auto px-4 py-6 pb-28">
           {children}
         </main>
+        <BottomNav />
         <Toaster />
       </UserProvider>
     );
@@ -66,7 +68,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;700&family=DM+Sans:wght@400;500;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
       </head>

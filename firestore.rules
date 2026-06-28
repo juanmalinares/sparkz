@@ -1,25 +1,38 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Quizzes can be read by anyone, but only modified by authenticated users (admin logic is in the app).
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Single-admin model: must match NEXT_PUBLIC_ADMIN_EMAIL used by the client.
+    // If the admin email ever changes, update it here too (or migrate to a
+    // custom claim / an `admins/{uid}` collection for a multi-admin setup).
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'juanma@juanmalinares.com';
+    }
+
+    // Quizzes: world-readable so the catalog loads, but only the admin can
+    // create, update, or delete content.
     match /quizzes/{quizId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
-    // User data can only be read or written by the user themselves.
+    // User data: each user owns their document. The admin may also read every
+    // user doc so the /admin-stats dashboard can aggregate scores.
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read:  if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
-    // Reports can be created by any authenticated user.
-    // Reading reports is also limited to authenticated users (admin logic is in the app).
+    // Reports: any signed-in user can file one (the in-quiz "report question"
+    // flow), but only the admin can read, triage, or delete them.
     match /reports/{reportId} {
-      allow read, create: if request.auth != null;
-      allow update, delete: if request.auth != null; // Admins can update status
+      allow create: if isSignedIn();
+      allow read, update, delete: if isAdmin();
     }
   }
 }

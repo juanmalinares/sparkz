@@ -73,6 +73,22 @@ export default function QuizListPage() {
           <p className="text-xl font-body text-slate">Select a subject to begin learning.</p>
       </div>
 
+      <Link href="/practica" className="block group mb-8">
+        <div className="sparkz-card flex items-center gap-5 p-6 bg-cobalt text-white overflow-hidden transition-transform group-hover:-translate-y-1 group-active:translate-y-0">
+          <div className="w-14 h-14 bg-white/15 border-2 border-near-black flex items-center justify-center shrink-0">
+            <IconSquare className="w-7 h-7 text-white" />
+          </div>
+          <div className="flex-grow">
+            <span className="sparkz-label text-white/70">Matemática · Entrenamiento</span>
+            <h2 className="text-2xl font-display font-bold leading-tight">Práctica de Cálculo</h2>
+            <p className="font-body text-sm text-white/80 mt-1">Ejercicios al instante para ganar velocidad. Sumas, restas, tablas y divisiones.</p>
+          </div>
+          <div className="w-10 h-10 bg-amber border-2 border-obsidian rounded-action flex items-center justify-center shrink-0" style={{ boxShadow: '2px 2px 0 #111827' }}>
+            <IconTriangle className="w-5 h-5 ml-1 transform rotate-90 text-obsidian" />
+          </div>
+        </div>
+      </Link>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {quizzes.map((quiz) => {
           const mapping = getSubjectStyle(quiz.topic || quiz.title || '');
