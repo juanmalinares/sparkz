@@ -135,7 +135,27 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
     const wasCorrect = isCorrect();
     if (wasCorrect) setScore(prev => prev + 1);
 
+    // Fallback shown if the AI is slow — uses the question's own explanation.
+    const fallback = wasCorrect
+      ? '¡Correcto! Muy bien hecho.'
+      : `La respuesta correcta es ${currentQuestion.correctAnswer}.` +
+        (currentQuestion.explanation ? ` ${currentQuestion.explanation}` : '');
+
     setIsFeedbackLoading(true);
+
+    // Cap the wait at 2s: whichever lands first (AI feedback or the timeout)
+    // wins, and a late AI response is ignored so the kid never gets stuck
+    // on "Analizando…".
+    let settled = false;
+    const finish = (fb: string, meta: { errorType?: string; hint?: string } | null) => {
+      if (settled) return;
+      settled = true;
+      setFeedback(fb);
+      setFeedbackMeta(meta);
+      setIsFeedbackLoading(false);
+    };
+    const timer = setTimeout(() => finish(fallback, null), 2000);
+
     try {
       const userAnswer = isTyped() ? typedAnswer : selectedAnswer!;
       const result = await generateFeedback({
@@ -146,14 +166,12 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
         explanation: currentQuestion.explanation,
         mode: quiz.mode,
       });
-      setFeedback(result.feedback);
-      setFeedbackMeta({ errorType: result.errorType, hint: result.hint });
+      clearTimeout(timer);
+      finish(result.feedback, { errorType: result.errorType, hint: result.hint });
     } catch (error) {
       console.error('Error generating feedback:', error);
-      setFeedback(wasCorrect ? '¡Correcto! Muy bien hecho.' : `La respuesta correcta es ${currentQuestion.correctAnswer}.`);
-      setFeedbackMeta(null);
-    } finally {
-      setIsFeedbackLoading(false);
+      clearTimeout(timer);
+      finish(fallback, null);
     }
   };
 
