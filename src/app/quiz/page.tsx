@@ -13,7 +13,7 @@ import type { Quiz } from '@/lib/types';
 
 type IconCmp = (p: SparkzIconProps) => ReactElement;
 
-// ── Colores por Materia (V3.0 palette) ───────────────────────────────
+// ── Colores por Materia (V3.0 palette) — used for the section header ──
 const SUBJECTS: { keywords: string[]; accent: string; Icon: IconCmp }[] = [
   { keywords: ['matemátic', 'matematic', 'math', 'cálculo', 'calcul', 'álgebra', 'geometr'], accent: '#6E6BF0', Icon: IconQuatrefoil },
   { keywords: ['ciencia', 'naturales', 'biolog', 'física', 'fisica', 'quím'],                accent: '#1FE0A6', Icon: IconStarburst  },
@@ -22,13 +22,22 @@ const SUBJECTS: { keywords: string[]; accent: string; Icon: IconCmp }[] = [
 ];
 const DEFAULT_SUBJECT = { accent: '#6E6BF0', Icon: IconQuatrefoil };
 
-// Per-card glyph variety within a subject (keeps the grid lively, not monotone).
+// Per-card glyph variety.
 const UNIT_GLYPHS: IconCmp[] = [IconQuatrefoil, IconStarburst, IconDisc, IconArch, IconSparkle, IconBolt];
+
+// Carátula colors — cycled per lesson so the catalog is vivid, not monochrome.
+const CARD_PALETTE: { accent: string; on: string }[] = [
+  { accent: '#6E6BF0', on: '#FFFFFF' }, // violet
+  { accent: '#1FE0A6', on: '#08291F' }, // mint
+  { accent: '#F4C24A', on: '#2A1D06' }, // gold
+  { accent: '#F2674C', on: '#FFFFFF' }, // coral
+  { accent: '#38BDF8', on: '#06283D' }, // sky
+  { accent: '#EC4899', on: '#FFFFFF' }, // pink
+];
 
 function subjectKey(q: Quiz): string {
   return (q.subject || q.topic || 'General').trim();
 }
-
 function subjectStyle(name: string) {
   const lower = name.toLowerCase();
   return SUBJECTS.find(s => s.keywords.some(k => lower.includes(k))) ?? DEFAULT_SUBJECT;
@@ -68,7 +77,6 @@ export default function QuizListPage() {
     }
     const result: SubjectGroup[] = [];
     for (const [name, list] of bySubject) {
-      // Restore authoring (≈ curricular) order: getQuizzes returns newest-first.
       const ordered = [...list].sort((a, b) => {
         const ao = a.order ?? null, bo = b.order ?? null;
         if (ao !== null && bo !== null) return ao - bo;
@@ -83,7 +91,6 @@ export default function QuizListPage() {
         quizzes: ordered,
       });
     }
-    // Bigger subjects first, with Matemática pinned to the top.
     return result.sort((a, b) => {
       if (a.name === 'Matemática') return -1;
       if (b.name === 'Matemática') return 1;
@@ -142,7 +149,9 @@ export default function QuizListPage() {
         </div>
       ) : (
         <div className="space-y-9">
-          {groups.map(group => (
+          {groups.map((group, gi) => {
+            const base = groups.slice(0, gi).reduce((n, g) => n + g.quizzes.length, 0);
+            return (
             <section key={group.name} style={{ '--accent': group.accent } as CSSProperties}>
               {/* Materia header */}
               <div className="flex items-center gap-3 mb-4">
@@ -163,40 +172,38 @@ export default function QuizListPage() {
                 {group.quizzes.map((quiz, i) => {
                   const Glyph = UNIT_GLYPHS[i % UNIT_GLYPHS.length];
                   const count = quiz.sessionLength || quiz.questions?.length || 10;
+                  const pal = CARD_PALETTE[(base + i) % CARD_PALETTE.length];
                   return (
-                    <Link href={`/quiz/${quiz.id}`} key={quiz.id} className="group block">
+                    <Link href={`/quiz/${quiz.id}`} key={quiz.id} className="group block h-full">
                       <article
-                        className="sparkz-card h-full p-5 flex flex-col gap-4 transition-all duration-200
-                                   group-hover:-translate-y-1 group-hover:border-[color:var(--accent)]
+                        style={{ '--accent': pal.accent } as CSSProperties}
+                        className="flex flex-col h-full rounded-card overflow-hidden bg-surface border border-[color:var(--line)]
+                                   transition-all duration-200 group-hover:-translate-y-1 group-hover:border-[color:var(--accent)]
                                    group-hover:shadow-[0_0_30px_-8px_var(--accent)]"
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="w-11 h-11 rounded-xl grid place-items-center shrink-0"
-                               style={{ background: 'color-mix(in srgb, var(--accent) 16%, transparent)' }}>
-                            <Glyph className="w-6 h-6" color="var(--accent)" />
-                          </div>
-                          <span className="bg-base rounded-pill px-3 py-1.5 leading-none inline-flex items-baseline gap-1">
-                            <span className="font-display text-lg text-ink">{count}</span>
-                            <span className="font-ui font-bold uppercase text-[9px] tracking-[0.1em] text-[color:var(--muted-foreground)]">
-                              preg
-                            </span>
+                        {/* Carátula */}
+                        <div className="relative h-24 overflow-hidden flex items-end p-4" style={{ background: pal.accent }}>
+                          <Glyph className="absolute -right-4 -bottom-6 w-28 h-28" color={pal.on} style={{ opacity: 0.16 }} />
+                          <Glyph className="w-8 h-8 relative z-10" color={pal.on} />
+                          <span className="absolute top-3 right-3 z-10 rounded-pill bg-base px-2.5 py-1 leading-none inline-flex items-baseline gap-1">
+                            <span className="font-display text-base text-ink">{count}</span>
+                            <span className="font-ui font-bold uppercase text-[9px] tracking-[0.1em] text-ink/55">preg</span>
                           </span>
                         </div>
 
-                        <div className="flex-grow">
+                        {/* Body */}
+                        <div className="flex flex-col flex-grow p-4">
                           <span className="sparkz-label">{quiz.unit || quiz.topic}</span>
-                          <h3 className="font-display text-[26px] leading-[1.03] text-ink mt-1">{quiz.title}</h3>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <span className="font-ui text-xs text-[color:var(--muted-foreground)]">
-                            {quiz.grade ? `${quiz.grade} · ` : ''}Lección
-                          </span>
-                          <span className="w-9 h-9 rounded-full grid place-items-center transition-colors
-                                           text-[color:var(--accent)] group-hover:text-[color:var(--base)]"
-                                style={{ background: 'color-mix(in srgb, var(--accent) 16%, transparent)' }}>
-                            <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
-                          </span>
+                          <h3 className="font-display text-[24px] leading-[1.05] text-ink mt-1">{quiz.title}</h3>
+                          <div className="mt-auto pt-4 flex items-center justify-between">
+                            <span className="font-ui text-xs text-[color:var(--muted-foreground)]">
+                              {quiz.grade ? `${quiz.grade} · ` : ''}Lección
+                            </span>
+                            <span className="w-9 h-9 rounded-full grid place-items-center text-[color:var(--accent)]"
+                                  style={{ background: 'color-mix(in srgb, var(--accent) 16%, transparent)' }}>
+                              <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
+                            </span>
+                          </div>
                         </div>
                       </article>
                     </Link>
@@ -204,7 +211,8 @@ export default function QuizListPage() {
                 })}
               </div>
             </section>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

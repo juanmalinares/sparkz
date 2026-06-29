@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trophy } from 'lucide-react';
 import { useUser } from '@/hooks/useUser';
 import { getQuizzes } from '@/lib/db';
 import type { Quiz, Score } from '@/lib/types';
@@ -21,6 +21,7 @@ interface Stats {
 }
 
 const WEEKDAY = ['D', 'L', 'M', 'X', 'J', 'V', 'S']; // Date.getDay() 0..6 (es-AR initials)
+const MASTERY_COLORS = ['#6E6BF0', '#1FE0A6', '#F4C24A', '#F2674C', '#38BDF8']; // one per subject badge
 
 function shortSubject(s: string): string {
   return s.trim().slice(0, 3).toUpperCase();
@@ -138,7 +139,7 @@ function DashboardView({ s }: { s: Stats }) {
       <section className="sparkz-card p-5">
         <span className="sparkz-label text-[color:var(--muted-foreground)]">Maestría por materia</span>
         <div className="mt-3">
-          <ConnectedBadges data={s.mastery} active={s.masteryActive} color="#6E6BF0" />
+          <ConnectedBadges data={s.mastery} active={s.masteryActive} colors={MASTERY_COLORS} />
         </div>
       </section>
       </div>
@@ -155,7 +156,8 @@ function DashboardView({ s }: { s: Stats }) {
           <span className="sparkz-label text-[color:var(--muted-foreground)]">Récord</span>
           <div className="flex-grow grid place-items-center py-2">
             <div className="text-center">
-              <p className="font-display text-mint leading-none" style={{ fontSize: 56 }}>{s.record}<span className="text-2xl">%</span></p>
+              <Trophy className="w-7 h-7 text-gold mx-auto mb-2" />
+              <p className="font-display text-gold leading-none" style={{ fontSize: 56 }}>{s.record}<span className="text-2xl">%</span></p>
               <span className="font-ui text-xs text-[color:var(--muted-foreground)]">mejor puntaje</span>
             </div>
           </div>

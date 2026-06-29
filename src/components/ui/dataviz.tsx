@@ -130,6 +130,7 @@ export function ConnectedBadges({
   data,
   active = -1,
   color = '#6E6BF0',
+  colors,
   track = '#2A2E37',
   valueColor = '#ffffff',
   labelColor = '#9CA3AF',
@@ -138,6 +139,7 @@ export function ConnectedBadges({
   data: BarDatum[];
   active?: number;
   color?: string;
+  colors?: string[];
   track?: string;
   valueColor?: string;
   labelColor?: string;
@@ -155,14 +157,18 @@ export function ConnectedBadges({
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Maestría por materia">
       {n > 1 && <line x1={cx(0)} y1={cy} x2={cx(n - 1)} y2={cy} stroke={track} strokeWidth="2" />}
       {data.map((d, i) => {
+        const c = colors?.[i] ?? color;
         const isActive = i === active;
         return (
           <g key={i}>
-            <circle cx={cx(i)} cy={cy} r={r} fill={surface} stroke={isActive ? color : track} strokeWidth={isActive ? 3 : 2} />
+            <circle cx={cx(i)} cy={cy} r={r} fill={isActive ? c : surface}
+              stroke={colors ? c : (isActive ? color : track)} strokeWidth={isActive ? 3 : 2}
+              strokeOpacity={colors && !isActive ? 0.6 : 1} />
             <text x={cx(i)} y={cy} textAnchor="middle" dominantBaseline="central"
-              fill={isActive ? color : valueColor} fontFamily="Anton, sans-serif" fontSize="16">{d.v}</text>
+              fill={isActive ? '#0A0D12' : (colors ? c : valueColor)} fontFamily="Anton, sans-serif" fontSize="16">{d.v}</text>
             <text x={cx(i)} y={H - 8} textAnchor="middle"
-              fill={isActive ? color : labelColor} fontFamily="Hanken Grotesk, sans-serif" fontWeight="700" fontSize="11" letterSpacing="1">{d.label}</text>
+              fill={colors ? c : (isActive ? color : labelColor)} fillOpacity={colors && !isActive ? 0.8 : 1}
+              fontFamily="Hanken Grotesk, sans-serif" fontWeight="700" fontSize="11" letterSpacing="1">{d.label}</text>
           </g>
         );
       })}
