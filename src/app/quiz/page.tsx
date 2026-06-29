@@ -159,7 +159,7 @@ export default function QuizListPage() {
               </div>
 
               {/* Lesson cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {group.quizzes.map((quiz, i) => {
                   const Glyph = UNIT_GLYPHS[i % UNIT_GLYPHS.length];
                   const count = quiz.sessionLength || quiz.questions?.length || 10;

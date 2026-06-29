@@ -107,7 +107,9 @@ function StatTile({ label, value, tone = 'light' }: { label: string; value: stri
 
 function DashboardView({ s }: { s: Stats }) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-5 lg:items-start">
+      {/* Left column: Esta semana + Maestría */}
+      <div className="space-y-5 lg:col-span-2">
       {/* Esta semana (hero) */}
       <section className="rounded-card bg-brand p-5" style={{ boxShadow: 'var(--glow-brand)' }}>
         <div className="flex items-baseline justify-between">
@@ -139,9 +141,10 @@ function DashboardView({ s }: { s: Stats }) {
           <ConnectedBadges data={s.mastery} active={s.masteryActive} color="#6E6BF0" />
         </div>
       </section>
+      </div>
 
-      {/* Precisión + Récord */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* Right column: Precisión + Récord */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-1 lg:gap-5">
         <section className="sparkz-card p-5 flex flex-col items-center">
           <span className="sparkz-label text-[color:var(--muted-foreground)] self-start">Precisión</span>
           <div className="mt-2">

@@ -32,7 +32,7 @@ export default function Header() {
 
   return (
     <header className="bg-base/90 backdrop-blur border-b border-[color:var(--line)] sticky top-0 z-40">
-      <div className="mx-auto max-w-lg flex items-center justify-between px-4 h-14">
+      <div className="mx-auto max-w-lg md:max-w-3xl lg:max-w-6xl flex items-center justify-between px-4 lg:px-8 h-14">
         <Link href="/" className="flex items-center gap-2 group">
           <SparkzLogo size={30} className="transition-transform group-hover:-translate-y-0.5" />
           <span className="font-display text-2xl tracking-tight text-ink leading-none">Sparkz</span>

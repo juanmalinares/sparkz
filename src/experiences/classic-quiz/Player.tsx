@@ -437,7 +437,7 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
   };
 
   return (
-    <div className="pb-28">
+    <div className="pb-28 lg:max-w-3xl lg:mx-auto">
       <header className="mb-5">
         <span className="sparkz-label text-brand">{[quiz.topic, quiz.unit].filter(Boolean).join(' · ')}</span>
         <h1 className="font-display text-[32px] text-ink leading-[0.95] mt-1.5">{quiz.title}</h1>

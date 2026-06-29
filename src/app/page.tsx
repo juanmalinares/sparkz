@@ -14,13 +14,13 @@ export default function LandingPage() {
   return (
     <div className="pb-6 space-y-8">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-card bg-brand p-7" style={{ boxShadow: 'var(--glow-brand)' }}>
-        <SparkzLogo size={150} fill="#ffffff" className="absolute -right-8 -top-8 opacity-[0.12] pointer-events-none" />
+      <section className="relative overflow-hidden rounded-card bg-brand p-7 lg:p-14" style={{ boxShadow: 'var(--glow-brand)' }}>
+        <SparkzLogo size={230} fill="#ffffff" className="absolute -right-12 -top-16 opacity-[0.12] pointer-events-none" />
         <span className="sparkz-label text-ink/70 relative z-10">Sparkz · Edades 6–10</span>
-        <h1 className="font-display text-[44px] leading-[0.9] text-ink mt-2 relative z-10">
+        <h1 className="font-display text-[44px] lg:text-[68px] leading-[0.9] text-ink mt-2 relative z-10">
           Aprendé<br />jugando.
         </h1>
-        <p className="font-body text-ink/85 mt-4 max-w-sm relative z-10 leading-relaxed">
+        <p className="font-body text-ink/85 mt-4 max-w-md lg:max-w-lg relative z-10 leading-relaxed">
           Lecciones cortas, feedback al instante y recompensas. La chispa que llevás adentro, lista para brillar.
         </p>
         <Link
@@ -32,8 +32,9 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="space-y-4">
-        <span className="sparkz-label text-[color:var(--muted-foreground)]">Por qué Sparkz</span>
+      <section>
+        <span className="sparkz-label text-[color:var(--muted-foreground)] block mb-4">Por qué Sparkz</span>
+        <div className="grid gap-4 lg:grid-cols-3">
         {FEATURES.map(f => (
           <div
             key={f.title}
@@ -52,6 +53,7 @@ export default function LandingPage() {
             </div>
           </div>
         ))}
+        </div>
       </section>
     </div>
   );

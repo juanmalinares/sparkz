@@ -53,7 +53,7 @@ export default function RootLayout({
     bodyContent = (
       <UserProvider>
         <Header />
-        <main className="flex-grow w-full max-w-lg mx-auto px-4 py-6 pb-28">
+        <main className="flex-grow w-full max-w-lg md:max-w-3xl lg:max-w-6xl mx-auto px-4 lg:px-8 py-6 lg:py-8 pb-28">
           {children}
         </main>
         <BottomNav />
