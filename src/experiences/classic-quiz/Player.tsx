@@ -6,6 +6,7 @@ import type {Quiz} from '@/lib/types';
 import {useUser} from '@/hooks/useUser';
 import {generateFeedback} from '@/ai/flows/generate-feedback';
 import {Loader2, ArrowRight, RotateCcw, Sparkles, Check, Lightbulb} from 'lucide-react';
+import { IconQuatrefoil, IconStarburst, IconDisc, IconArch, IconSparkle } from '@/components/ui/sparkz-icons';
 import {cn} from '@/lib/utils';
 import {answersMatch} from '@/lib/answer-match';
 
@@ -27,6 +28,16 @@ const ERROR_LABELS: Record<string, string> = {
 // Dark forest ink used on mint / gold concept surfaces (matches V3.0 mockup).
 const ON_MINT = '#08291F';
 const ON_GOLD = '#2A1D06';
+
+// Per-rule color so the theory cards aren't a monochrome wall.
+const THEORY_PALETTE: { accent: string; on: string }[] = [
+  { accent: '#6E6BF0', on: '#FFFFFF' }, // violet
+  { accent: '#1FE0A6', on: '#08291F' }, // mint
+  { accent: '#F2674C', on: '#FFFFFF' }, // coral
+  { accent: '#38BDF8', on: '#06283D' }, // sky
+  { accent: '#EC4899', on: '#FFFFFF' }, // pink
+];
+const THEORY_GLYPHS = [IconQuatrefoil, IconStarburst, IconDisc, IconArch, IconSparkle];
 
 function PhaseDot({active, cls}: {active: boolean; cls: string}) {
   return <span className={cn('h-2 rounded-full transition-all duration-300', cls, active ? 'w-7' : 'w-2 opacity-30')} />;
@@ -170,34 +181,45 @@ export default function QuizClient({quiz}: {quiz: Quiz}) {
   const renderTheoryView = () => (
     <div className="space-y-5 animate-in fade-in slide-in-from-bottom-3 duration-500">
       {quiz.theory?.intro && (
-        <div className="rounded-card p-6 bg-gold" style={{ color: ON_GOLD }}>
-          <span className="font-ui font-bold uppercase text-[11px] tracking-[0.15em]" style={{ color: `${ON_GOLD}99` }}>
-            Concepto clave
+        <div className="rounded-card p-7 md:p-8 bg-gold" style={{ color: ON_GOLD }}>
+          <span className="font-ui font-bold uppercase text-xs tracking-[0.15em] flex items-center gap-1.5" style={{ color: `${ON_GOLD}B3` }}>
+            <Lightbulb className="w-4 h-4" /> Concepto clave
           </span>
-          <p className="font-display text-2xl leading-[1.12] mt-2">{quiz.theory.intro}</p>
+          <p className="font-body font-semibold text-xl md:text-2xl leading-relaxed mt-3">{quiz.theory.intro}</p>
         </div>
       )}
 
-      <div className="space-y-4">
-        {quiz.theory?.rules.map((rule, i) => (
-          <div key={i} className="sparkz-card p-5">
-            <div className="flex items-center gap-3 mb-2.5">
-              <span className="w-8 h-8 rounded-lg grid place-items-center bg-mint/15 text-mint font-display text-base shrink-0">
-                {i + 1}
-              </span>
-              <h3 className="font-display text-xl text-ink leading-none">{rule.title}</h3>
-            </div>
-            <p className="font-body text-[15px] leading-relaxed text-[color:var(--muted-foreground)]">{rule.text}</p>
-            {rule.example && (
-              <div className="mt-4 rounded-xl p-4 bg-mint" style={{ color: ON_MINT }}>
-                <span className="font-ui font-bold uppercase text-[10px] tracking-[0.15em]" style={{ color: `${ON_MINT}99` }}>
-                  Ejemplo
-                </span>
-                <p className="font-body font-bold text-sm mt-1 leading-snug">{rule.example}</p>
+      <div className="space-y-5">
+        {quiz.theory?.rules.map((rule, i) => {
+          const pal = THEORY_PALETTE[i % THEORY_PALETTE.length];
+          const Glyph = THEORY_GLYPHS[i % THEORY_GLYPHS.length];
+          return (
+            <div
+              key={i}
+              className="sparkz-card relative overflow-hidden p-6 md:p-8"
+              style={{
+                background: `color-mix(in srgb, ${pal.accent} 10%, var(--surface))`,
+                borderColor: `color-mix(in srgb, ${pal.accent} 30%, var(--line))`,
+              }}
+            >
+              <Glyph className="absolute -right-6 -top-6 w-36 h-36 pointer-events-none" color={pal.accent} style={{ opacity: 0.12 }} />
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="w-12 h-12 rounded-xl grid place-items-center font-display text-2xl shrink-0"
+                        style={{ background: pal.accent, color: pal.on }}>{i + 1}</span>
+                  <h3 className="font-display text-2xl md:text-3xl text-ink leading-[0.95]">{rule.title}</h3>
+                </div>
+                <p className="font-body text-lg leading-relaxed text-ink/85">{rule.text}</p>
+                {rule.example && (
+                  <div className="mt-5 rounded-xl p-5" style={{ background: pal.accent, color: pal.on }}>
+                    <span className="font-ui font-bold uppercase text-[11px] tracking-[0.15em]" style={{ color: pal.on, opacity: 0.7 }}>Ejemplo</span>
+                    <p className="font-body font-bold text-lg mt-1.5 leading-snug">{rule.example}</p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
 
       <button
