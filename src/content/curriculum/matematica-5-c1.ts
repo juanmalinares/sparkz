@@ -1,4 +1,5 @@
 import type { Quiz } from '@/lib/types';
+import { genCombinedOps, genRomanNumerals, genProportionality, genGeometry } from './generators';
 
 /**
  * Currículum: Matemática 5° — Cuatrimestre 1 (C1).
@@ -369,5 +370,14 @@ const geometria: Quiz = {
   ],
 };
 
-/** Todos los módulos del cuatrimestre, en orden. */
-export const matematica5C1: Quiz[] = [romanos, combinados, proporcionalidad, geometria];
+/**
+ * Todos los módulos del cuatrimestre, en orden. A cada unidad le sumamos un
+ * banco grande de preguntas generadas proceduralmente (RNG sembrado, estable)
+ * además de las autoradas — así cada lección tiene ~4x+ de variedad.
+ */
+export const matematica5C1: Quiz[] = [
+  { ...romanos,          questions: [...romanos.questions,          ...genRomanNumerals(11, 50)] },
+  { ...combinados,       questions: [...combinados.questions,       ...genCombinedOps(22, 50)] },
+  { ...proporcionalidad, questions: [...proporcionalidad.questions, ...genProportionality(33, 50)] },
+  { ...geometria,        questions: [...geometria.questions,        ...genGeometry(44, 50)] },
+];
